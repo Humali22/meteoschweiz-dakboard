@@ -24,9 +24,12 @@ def latest_item():
     data = json.loads(fetch(BASE + '/items?limit=30'))
     features = data.get('features', [])
     if not features:
-        raise RuntimeError('No forecast items in STAC feed')
-    # YYYYMMDD-ch item ids are sortable chronologically.
-    return max(features, key=lambda item: item['id'])
+        raise RuntimeError('Keine Prognosedaten gefunden')
+    for item in sorted(features, key=lambda x: x['id'], reverse=True):
+        if all(any(re.search(r'\.' + re.escape(p) + r'\.csv(?:\?|$)', v.get('href', ''), re.I)
+                   for v in item.get('assets', {}).values()) for p in PARAMS):
+            return item
+    raise RuntimeError('Kein vollstaendiger Prognosedatensatz gefunden')
 
 def find_asset(item, param):
     for key, value in item['assets'].items():
