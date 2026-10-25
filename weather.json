@@ -1,0 +1,35 @@
+{
+  "location": "Kriens",
+  "point_id": "601000",
+  "forecast_item": "20261025-ch",
+  "updated": "2026-10-25T14:18:42.295216+01:00",
+  "days": [
+    {
+      "date": "2026-10-25",
+      "label": "Heute",
+      "symbol_code": "17",
+      "symbol": "🌧️",
+      "min_c": 7.1,
+      "max_c": 14.3,
+      "rain_mm": 5.4
+    },
+    {
+      "date": "2026-10-26",
+      "label": "Morgen",
+      "symbol_code": "3",
+      "symbol": "🌤️",
+      "min_c": 4.9,
+      "max_c": 11.9,
+      "rain_mm": 0.0
+    },
+    {
+      "date": "2026-10-27",
+      "label": "Übermorgen",
+      "symbol_code": "1",
+      "symbol": "🌤️",
+      "min_c": 6.2,
+      "max_c": 15.6,
+      "rain_mm": 0.0
+    }
+  ]
+}
