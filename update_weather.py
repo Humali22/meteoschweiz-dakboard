@@ -1,232 +1,3 @@
-Ältere Nachrichten werden geladen…
-Benutzeranhang
-
-Sehr gut, die neue Wetteranzeige funktioniert! ✅ Die fünf Tage, Temperaturen, Windgeschwindigkeiten, Regenbalken und Niederschlagsmengen werden angezeigt.
-
-Mir fallen auf deinem Screenshot allerdings noch ein paar Dinge auf, die ich vor der Einbindung ins DAKboard verbessern würde.
-Was ich noch optimieren würde
-
-    Wochentage auf Deutsch: Statt «Tue», «Wed», «Thu» sollten «Di», «Mi», «Do» erscheinen.
-
-    Regenwahrscheinlichkeit direkt ablesbar: Momentan sieht man die Balken, aber die genauen Prozentwerte erst, wenn man mit der Maus darüberfährt. Das ist für euren Touchscreen nicht ideal.
-
-    Wind verständlicher darstellen: Die Angabe ~ 17 km/h · Böen 58 würde ich beispielsweise als Wind 17 km/h · Böen 58 km/h schreiben.
-
-    Platz sparen: Die fünf Wetterkarten könnten insgesamt etwas flacher werden, damit mehr Platz für den Familienkalender und die Ämtliliste bleibt.
-
-Besonders wichtig: die Regenbalken
-
-Bei deinem heutigen Wetter sehe ich hohe Balken am frühen Morgen und am Nachmittag. Das ist genau die Information, die du wolltest.
-
-Ich würde zusätzlich den höchsten Prozentwert jedes Tages anzeigen. Zum Beispiel:
-
-Heute
-
-Beispiel
-
-7° / 14°
-
-Max. 85 % Regen
-
-Die Balken darunter zeigen, zu welcher Tageszeit Regen wahrscheinlich ist.
-
-Die 85 % sind ein Beispielwert, nicht aus deinem Screenshot ausgelesen.
-
-Meine Empfehlung: Wir nehmen diese vier kleinen Anpassungen noch vor und integrieren danach die Wetteranzeige in DAKboard. Technisch haben wir die schwierige Arbeit inzwischen geschafft.
-
-Eine Frage zum Schluss: Möchtest du bei fünf Tagen bleiben, oder sollen es sechs Tage sein wie bei deinem ursprünglichen MeteoSchweiz-Beispiel?
-5 it okay und ja gerne anpassungen machen
-
-Die überarbeitete Version ist bereit! Ich habe deine funktionierende Wetteranzeige gezielt angepasst, ohne die MeteoSchweiz-Datenabfrage zu verändern.
-Das ist jetzt verbessert
-
-Wetter Kriens
-
-MeteoSchweiz
-
-Heute
-
-7° / 14°
-
-17 km/h
-
-Max. 90%
-
-Morgen
-
-5° / 12°
-
-5 km/h
-
-Max. 10%
-
-Di 27.10.
-
-6° / 16°
-
-4 km/h
-
-Max. 5%
-
-Mi 28.10.
-
-8° / 13°
-
-5 km/h
-
-Max. 40%
-
-Do 29.10.
-
-6° / 11°
-
-5 km/h
-
-Max. 25%
-
-Regenwahrscheinlichkeit je 3 Stunden · höchste Wahrscheinlichkeit zusätzlich als Zahl.
-Gestaltungsvorschau mit Beispielwerten; die tatsächlichen Daten werden aus MeteoSchweiz geladen.
-
-Die endgültige Version enthält weiterhin die täglichen Niederschlagsmengen, Windböen ab 40 km/h und den Regenradar-Button. Sie ist etwas flacher und für euren DAKboard-Bildschirm platzsparender.
-Schritt 1 – Neue Datei herunterladen
-
-update_weather.py
-
-Korrigierte Version für 5 Tage, deutsche Wochentage und kompaktere Anzeige.
-
- Überarbeitete Wetterdatei herunterladen
-Schritt 2 – In GitHub ersetzen
-
-    Lade die Datei herunter und öffne sie mit dem Windows-Editor.
-
-    Kopiere den gesamten Inhalt mit Strg + A und Strg + C.
-
-    Öffne Deine GitHub-Wetterdatei.
-
-    Klicke auf das Stiftsymbol.
-
-    Ersetze den gesamten bisherigen Code durch den neuen (Strg + A, dann Strg + V).
-
-    Klicke auf Commit changes und bestätige.
-
-Schritt 3 – Aktualisierung starten
-
-Öffne MeteoSchweiz-Wetter aktualisieren und starte über Run workflow einen neuen Durchlauf.
-
-Die Datei ist auf Python-Syntax geprüft, aber noch nicht mit Live-Wetterdaten getestet.
-
-Sobald der Durchlauf grün ist, öffne wieder deine Wetteranzeige für Kriens.
-
-Danach kommt der letzte Schritt: Wir integrieren das kompakte Wetter-Widget in die Hauptseite deines DAKboards und prüfen, ob der Regenradar-Button am Touchscreen funktioniert.
-update_weather.pyCode
-Benutzeranhang
-
-Auf deinem Screenshot sehe ich, dass noch die alte Wetteranzeige dargestellt wird:
-
-    Die Wochentage stehen weiterhin auf Englisch (Tue, Wed, Thu).
-
-    Die maximale Regenwahrscheinlichkeit in Prozent fehlt.
-
-    Die Windangaben sind noch nicht ausgeschrieben.
-
-Auch wenn GitHub einen grünen Haken anzeigt, ist die neue Darstellung offenbar noch nicht auf deiner Wetterseite angekommen.
-
-Wir prüfen jetzt zuerst, ob es nur am Browser-Cache liegt oder ob die neue Version noch nicht veröffentlicht wurde.
-Schritt 1 – Seite neu laden
-
-    Öffne deine Wetteranzeige für Kriens.
-
-    Drücke auf deinem Windows-PC Strg + F5.
-
-    Prüfe, ob nun die deutschen Wochentage und die Prozentangaben erscheinen.
-
-Falls nach Strg + F5 noch immer die alte Version erscheint, liegt es wahrscheinlich nicht am Browser.
-
-Ich habe gerade die öffentlich abrufbare GitHub-Datei geprüft. Dort sehe ich noch eine ältere Version von update_weather.py, die lediglich drei Tage erzeugt. Das passt nicht zur Fünf-Tage-Anzeige auf deinem Screenshot. Möglicherweise ist die öffentliche Datei noch nicht auf dem neuesten Stand. 
-GitHub
-
-Schritt 2 – Prüfen, ob die neue Datei gespeichert ist
-
-    Öffne update_weather.py auf GitHub.
-
-    Drücke Strg + F und suche nach Max. oder Regenwahrscheinlichkeit.
-
-    Wenn du die neuen Texte im Code nicht findest, müssen wir kontrollieren, welche Dateiversion zuletzt gespeichert wurde.
-
-Schicke mir am besten einen Screenshot vom oberen Bereich der Datei mit dem letzten Änderungsdatum. Dann können wir feststellen, ob wir die Datei nochmals ersetzen müssen oder ob nur die Veröffentlichung hinterherhinkt.
-Benutzeranhang
-Benutzeranhang
-
-Jetzt sehe ich auf deinen Screenshots, weshalb noch die alte Darstellung erscheint. Auf GitHub liegt noch die vorherige Version mit 190 Codezeilen. Die korrigierte Version hat 193 Zeilen.
-
-Du hast also nichts falsch eingerichtet – wir müssen nur sicherstellen, dass die neueste Datei tatsächlich auf GitHub gespeichert wird.
-Schritt 1 – Richtige Datei herunterladen
-
-update_weather.py – korrigierte Version
-
-193 Zeilen, deutsche Wochentage, maximale Regenwahrscheinlichkeit und kompaktere Darstellung
-
-Korrigierte Python-Datei herunterladen
-Schritt 2 – Auf GitHub ersetzen
-
-    Öffne die heruntergeladene Datei auf deinem Computer im Windows-Editor.
-
-    Drücke Strg + A und Strg + C.
-
-    Öffne Deine GitHub-Datei.
-
-    Klicke auf das Stiftsymbol rechts oben.
-
-    Klicke in den Code und drücke Strg + A, danach Strg + V.
-
-    Klicke auf Commit changes und bestätige nochmals.
-
-Kontrolle: Nach dem Speichern sollte GitHub ungefähr 193 lines anzeigen, nicht mehr 190.
-Schritt 3 – Wetteranzeige aktualisieren
-
-Öffne MeteoSchweiz-Wetter aktualisieren.
-
-Starte mit Run workflow → main → Run workflow einen neuen Durchlauf.
-
-Wenn der grün ist, öffne deine Wetteranzeige und aktualisiere mit Strg + F5.
-
-Danach sollten die Wochentage deutsch sein und oberhalb der Regenbalken beispielsweise «Max. 75 % Regen» stehen.
-
-Die Wetterdatenabfrage, fünf Tage und der Regenradar-Button bleiben unverändert.
-update_weather.pyCode
-ich kann die korrigierte python datei nicht herunterladnden
-1m 17s nachgedacht
-
-Kein Problem! 😊 Ich habe die korrigierte Datei nochmals neu bereitgestellt – diesmal auch als ZIP-Datei, falls der direkte Python-Download nicht funktioniert.
-
-MeteoSchweiz – korrigierte Wetterdatei
-
-5 Tage, deutsche Wochentage, Regenwahrscheinlichkeit und Wind
-
-Alternativ: Python-Datei direkt herunterladen
-So gehst du vor
-
-    Lade die ZIP-Datei herunter.
-
-    Öffne deinen Downloads-Ordner.
-
-    Rechtsklick auf die ZIP-Datei → Alle extrahieren.
-
-    Im entpackten Ordner findest du update_weather.py.
-
-    Öffne diese mit dem Windows-Editor und kopiere den gesamten Inhalt.
-
-    Öffne deine GitHub-Datei und ersetze dort über das Stiftsymbol den bisherigen Code.
-
-Danach mit Commit changes speichern.
-
-Falls auch die ZIP-Datei nicht heruntergeladen werden kann, sag mir das. Dann machen wir die notwendigen Korrekturen direkt im GitHub-Editor, ohne eine Datei herunterzuladen.
-meteoschweiz_kriens_5tage_korrigiert.pyCode
-
-
-
-    
-  
 """MeteoSchweiz E4 forecast for Kriens; create static GitHub Pages dashboard."""
 import csv
 import io
@@ -355,4 +126,68 @@ def fmt_num(n):
 
 
 def main():
+    item = latest_item()
+    all_data = {param: load_parameter(item, param) for param in PARAMS}
+    daily = {param: by_day(all_data[param]) for param in DAILY}
+    today = datetime.now(TZ).date()
+    days = []
+    for offset in range(5):
+        date = (today + timedelta(days=offset)).isoformat()
+        sym_value = all_data['jp2000d0']
+        daily_symbols = {local_datetime(stamp).date().isoformat(): code for stamp, code in sym_value.items()}
+        day = {
+            'date': date,
+            'label': ['Heute', 'Morgen'][offset] if offset < 2 else ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'][(today + timedelta(days=offset)).weekday()] + (today + timedelta(days=offset)).strftime(' %d.%m.'),
+            'symbol': symbol_emoji(daily_symbols.get(date)),
+            'min_c': daily['tre200pn'].get(date),
+            'max_c': daily['tre200px'].get(date),
+            'rain_mm': daily['rka150p0'].get(date),
+            'rain_probability_3h': rain_slots(all_data['rp0003i0'], date),
+            'wind_max_kmh': wind_day(all_data['fu3010h0'], date),
+            'gust_max_kmh': wind_day(all_data['fu3010h1'], date),
+        }
+        days.append(day)
+    if all(day['min_c'] is None and day['max_c'] is None for day in days):
+        raise RuntimeError('Keine Tages-Temperaturen gefunden')
+    updated = datetime.now(TZ)
+    payload = {'location': 'Kriens', 'source': 'MeteoSchweiz Open Data', 'forecast_item': item['id'],
+               'updated': updated.isoformat(), 'days': days}
+    Path('weather.json').write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding='utf-8')
 
+    cards = []
+    for day in days:
+        bars = []
+        for i, probability in enumerate(day['rain_probability_3h']):
+            if probability is None:
+                bars.append('<span class="bar missing" title="Keine Prognose"></span>')
+            else:
+                height = max(3, min(100, probability))
+                bars.append(f'<span class="bar" style="height:{height}%" title="{i*3:02d}–{(i+1)*3:02d} Uhr: {probability:g}% Regenwahrscheinlichkeit"></span>')
+        wind = '–' if day['wind_max_kmh'] is None else str(day['wind_max_kmh'])
+        gust = (' · Böen ' + str(day['gust_max_kmh']) + ' km/h') if day['gust_max_kmh'] is not None and day['gust_max_kmh'] >= 40 else ''
+        available_probabilities = [p for p in day['rain_probability_3h'] if p is not None]
+        max_probability = (f'Max. {max(available_probabilities):g} % Regen' if available_probabilities else 'Regen: k. A.')
+        cards.append(f'''<section class="day"><h2>{escape(day['label'])}</h2><div class="icon">{escape(day['symbol'])}</div>
+            <strong>{fmt_temp(day['min_c'])} / {fmt_temp(day['max_c'])}</strong>
+            <div class="wind">🌬️ Wind {wind} km/h{gust}</div>
+            <div class="probability">{max_probability}</div>
+            <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten">{''.join(bars)}</div>
+            <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
+            <div class="rain">💧 {fmt_num(day['rain_mm'])} mm / Tag</div></section>''')
+    html = '''<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="3600"><title>Wetter Kriens – MeteoSchweiz</title>
+<style>*{box-sizing:border-box}body{font-family:system-ui,Arial,sans-serif;background:#f5f8fc;color:#243344;margin:0;padding:12px}
+header{display:flex;justify-content:space-between;gap:8px;align-items:center}header h1{font-size:18px;margin:0}.source{font-size:11px;color:#60738b}
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:7px}.day{background:#fff;border-radius:11px;padding:8px 5px;text-align:center;min-width:0}
+.day h2{margin:0;font-size:13px}.icon{font-size:27px;margin:3px 0}.day strong{font-size:16px;white-space:nowrap}.wind,.rain{font-size:11px;color:#536477;margin-top:4px}.probability{font-size:11px;font-weight:650;color:#236996;margin-top:4px}
+.bars{height:40px;display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid #bbc9d7;margin:6px 3px 0}.bar{display:block;background:#418fca;flex:1;border-radius:2px 2px 0 0;min-width:0}.bar.missing{background:#dce3ea;height:2px}
+.hours{display:flex;justify-content:space-between;font-size:9px;color:#64748b;padding:2px 2px 0}.legend{font-size:11px;color:#536477;margin:9px 0 0}
+.radar{display:block;text-align:center;background:#dce9f7;color:#17406f;padding:7px;border-radius:9px;margin-top:7px;font-size:13px;text-decoration:none;font-weight:600}
+footer{font-size:10px;color:#60738b;margin-top:8px}@media(max-width:600px){body{padding:6px}.days{gap:3px}.day{padding:7px 2px}.day h2{font-size:10px}.icon{font-size:24px}.day strong{font-size:12px}.wind,.rain,.probability{font-size:9px}.bars{gap:1px}}
+</style></head><body><header><h1>🌤️ Wetter Kriens</h1><div class="source">MeteoSchweiz</div></header><main class="days">''' + ''.join(cards) + '''</main><p class="legend">Blaue Balken: Regenwahrscheinlichkeit (%) für jeweils 3 Stunden · 0–24 Uhr. Höchster Wert pro Tag zusätzlich über den Balken.</p><a class="radar" target="_blank" rel="noopener" href="''' + RADAR + '''">🌧️ Regenradar öffnen</a><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: ''' + escape(updated.strftime('%d.%m.%Y %H:%M')) + '''</footer></body></html>'''
+    Path('index.html').write_text(html, encoding='utf-8')
+    print('Generated five-day forecast:', item['id'])
+
+
+if __name__ == '__main__':
+    main()
