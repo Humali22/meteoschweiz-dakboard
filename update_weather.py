@@ -39,7 +39,7 @@ def find_asset(item, param):
     raise RuntimeError('No asset for parameter: ' + param)
 
 def forecast_row(url):
-    txt = fetch(url).decode('latin-1-sig')
+    txt = fetch(url).decode('latin-1')
     reader = csv.DictReader(io.StringIO(txt), delimiter=';')
     if not reader.fieldnames:
         raise RuntimeError('Empty CSV')
