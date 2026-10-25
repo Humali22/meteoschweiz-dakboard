@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Familienradio</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#16314b;background:transparent}
+*{box-sizing:border-box}
+body{margin:0;padding:10px}
+.panel{background:#f3f7fc;border:1px solid #dce7f3;border-radius:18px;padding:12px 14px;max-width:1100px;margin:auto}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+h1{font-size:20px;margin:0;font-weight:750}
+small{font-size:12px;color:#5d7289}
+.controls{display:flex;align-items:stretch;gap:9px;flex-wrap:wrap}
+.station,.stop{min-height:52px;border:1px solid #d0ddeb;border-radius:13px;background:white;color:#19324b;font-size:16px;font-weight:700;padding:10px 14px;cursor:pointer;flex:1;min-width:122px;touch-action:manipulation}
+.station:active,.stop:active{transform:scale(.99)}
+.station[aria-pressed="true"]{background:#1d6eb0;border-color:#1d6eb0;color:white}
+.stop{flex:0 0 auto;min-width:100px;background:#e8edf2}
+footer{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.status{font-size:13px;color:#465f79;flex:1;min-width:200px}
+.volume{display:flex;gap:7px;align-items:center;font-size:13px;color:#465f79}
+input[type=range]{accent-color:#1d6eb0;min-width:90px;width:115px}
+@media(max-width:540px){body{padding:4px}.panel{padding:8px;border-radius:12px}h1{font-size:16px}.station,.stop{font-size:14px;min-height:45px;padding:8px;min-width:94px}.stop{min-width:80px}.controls{gap:6px}.volume{display:none}}
+</style>
+</head>
+<body>
+<section class="panel" aria-label="Familienradio">
+<header><h1>📻 Familienradio</h1><small>Tippen zum Abspielen</small></header>
+<div class="controls" role="group" aria-label="Radiosender">
+<button class="station" type="button" data-station="srf1" aria-pressed="false">▶ SRF 1</button>
+<button class="station" type="button" data-station="srf2" aria-pressed="false">▶ SRF 2 Kultur</button>
+<button class="station" type="button" data-station="pilatus" aria-pressed="false">▶ Radio Pilatus</button>
+<button class="stop" type="button" id="stop">■ Stopp</button>
+</div>
+<footer><span id="status" role="status" class="status">Bereit · Ton am Wanddisplay erforderlich</span><label class="volume">🔊 Lautstärke <input id="volume" type="range" min="0" max="100" value="70" aria-label="Lautstärke"></label></footer>
+<audio id="radio" preload="none" playsinline></audio>
+</section>
+<script>
+'use strict';
+const streams={
+ srf1:{name:'SRF 1',url:'https://stream.srg-ssr.ch/srgssr/srf1/mp3/128'},
+ srf2:{name:'SRF 2 Kultur',url:'https://stream.srg-ssr.ch/srgssr/srf2/mp3/128'},
+ pilatus:{name:'Radio Pilatus',url:'https://stream.streambase.ch/radiopilatus/mp3-128/stream.streambase.ch/'}
+};
+const radio=document.querySelector('#radio');
+const status=document.querySelector('#status');
+const buttons=[...document.querySelectorAll('.station')];
+radio.volume=.7;
+function mark(key){buttons.forEach(button=>{let active=button.dataset.station===key;button.setAttribute('aria-pressed',String(active));button.textContent=(active?'❚❚ ':'▶ ')+streams[button.dataset.station].name})}
+function stop(){radio.pause();radio.removeAttribute('src');radio.load();mark(null);status.textContent='Radio gestoppt'}
+for(const btn of buttons){btn.addEventListener('click',async()=>{
+ const key=btn.dataset.station;
+ if(btn.getAttribute('aria-pressed')==='true'&&!radio.paused){stop();return}
+ radio.pause();radio.src=streams[key].url;radio.load();mark(key);status.textContent='Verbinde mit '+streams[key].name+' …';
+ try{await radio.play();status.textContent='Live: '+streams[key].name}
+ catch(err){mark(null);status.textContent='Wiedergabe nicht möglich. Internet, Ton und Stream prüfen.'}
+})}
+document.querySelector('#stop').addEventListener('click',stop);
+document.querySelector('#volume').addEventListener('input',ev=>{radio.volume=Number(ev.target.value)/100});
+radio.addEventListener('error',()=>{if(radio.src){mark(null);status.textContent='Stream nicht erreichbar. Anderen Sender ausprobieren.'}});
+window.addEventListener('pagehide',()=>radio.pause());
+</script>
+</body>
+</html>
