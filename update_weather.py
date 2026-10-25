@@ -46,12 +46,17 @@ def forecast_row(url):
     fields = {s.strip().lower(): s for s in reader.fieldnames}
     pid = fields.get('point_id')
     ptype = fields.get('point_type_id')
-    if not pid or not ptype:
-        raise RuntimeError('Unexpected CSV headers: ' + repr(reader.fieldnames[:8]))
+    date_col = fields.get('date')
+    value_cols = [s for s in reader.fieldnames if s not in (pid, ptype, date_col)]
+    if not pid or not ptype or not date_col or not value_cols:
+        raise RuntimeError('Unexpected CSV headers: ' + repr(reader.fieldnames))
+    result = {}
     for row in reader:
         if row[pid].strip() == POINT_ID and row[ptype].strip() == POINT_TYPE:
-            return row
-    raise RuntimeError('Kriens point not found in ' + url)
+            result[row[date_col].strip()] = row[value_cols[0]].strip()
+    if not result:
+        raise RuntimeError('No forecast values found for Kriens')
+    return result
 
 def daily_map(row):
     dates = {}
