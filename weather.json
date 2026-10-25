@@ -2,7 +2,7 @@
   "location": "Kriens",
   "source": "MeteoSchweiz Open Data",
   "forecast_item": "20261025-ch",
-  "updated": "2026-10-25T16:39:32.131245+01:00",
+  "updated": "2026-10-25T18:29:05.026475+01:00",
   "days": [
     {
       "date": "2026-10-25",
@@ -46,7 +46,7 @@
     },
     {
       "date": "2026-10-27",
-      "label": "Tue 27.10.",
+      "label": "Di 27.10.",
       "symbol": "🌤️",
       "min_c": 6.2,
       "max_c": 15.6,
@@ -66,7 +66,7 @@
     },
     {
       "date": "2026-10-28",
-      "label": "Wed 28.10.",
+      "label": "Mi 28.10.",
       "symbol": "🌧️",
       "min_c": 8.4,
       "max_c": 12.6,
@@ -86,7 +86,7 @@
     },
     {
       "date": "2026-10-29",
-      "label": "Thu 29.10.",
+      "label": "Do 29.10.",
       "symbol": "🌧️",
       "min_c": 6.2,
       "max_c": 11.2,

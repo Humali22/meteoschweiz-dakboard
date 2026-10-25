@@ -1,36 +1,41 @@
 <!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="refresh" content="3600"><title>Wetter Kriens – MeteoSchweiz</title>
 <style>*{box-sizing:border-box}body{font-family:system-ui,Arial,sans-serif;background:#f5f8fc;color:#243344;margin:0;padding:12px}
-header{display:flex;justify-content:space-between;gap:8px;align-items:center}header h1{font-size:19px;margin:0}.source{font-size:11px;color:#60738b}
-.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:9px}.day{background:#fff;border-radius:11px;padding:10px 5px;text-align:center;min-width:0}
-.day h2{margin:0;font-size:13px}.icon{font-size:31px;margin:5px 0}.day strong{font-size:16px;white-space:nowrap}.wind,.rain{font-size:11px;color:#536477;margin-top:6px}
-.bars{height:52px;display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid #bbc9d7;margin:10px 3px 0}.bar{display:block;background:#418fca;flex:1;border-radius:2px 2px 0 0;min-width:0}.bar.missing{background:#dce3ea;height:2px}
+header{display:flex;justify-content:space-between;gap:8px;align-items:center}header h1{font-size:18px;margin:0}.source{font-size:11px;color:#60738b}
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:7px}.day{background:#fff;border-radius:11px;padding:8px 5px;text-align:center;min-width:0}
+.day h2{margin:0;font-size:13px}.icon{font-size:27px;margin:3px 0}.day strong{font-size:16px;white-space:nowrap}.wind,.rain{font-size:11px;color:#536477;margin-top:4px}.probability{font-size:11px;font-weight:650;color:#236996;margin-top:4px}
+.bars{height:40px;display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid #bbc9d7;margin:6px 3px 0}.bar{display:block;background:#418fca;flex:1;border-radius:2px 2px 0 0;min-width:0}.bar.missing{background:#dce3ea;height:2px}
 .hours{display:flex;justify-content:space-between;font-size:9px;color:#64748b;padding:2px 2px 0}.legend{font-size:11px;color:#536477;margin:9px 0 0}
-.radar{display:block;text-align:center;background:#dce9f7;color:#17406f;padding:9px;border-radius:9px;margin-top:9px;font-size:13px;text-decoration:none;font-weight:600}
-footer{font-size:10px;color:#60738b;margin-top:8px}@media(max-width:600px){body{padding:6px}.days{gap:3px}.day{padding:7px 2px}.day h2{font-size:10px}.icon{font-size:24px}.day strong{font-size:12px}.wind,.rain{font-size:9px}.bars{gap:1px}}
+.radar{display:block;text-align:center;background:#dce9f7;color:#17406f;padding:7px;border-radius:9px;margin-top:7px;font-size:13px;text-decoration:none;font-weight:600}
+footer{font-size:10px;color:#60738b;margin-top:8px}@media(max-width:600px){body{padding:6px}.days{gap:3px}.day{padding:7px 2px}.day h2{font-size:10px}.icon{font-size:24px}.day strong{font-size:12px}.wind,.rain,.probability{font-size:9px}.bars{gap:1px}}
 </style></head><body><header><h1>🌤️ Wetter Kriens</h1><div class="source">MeteoSchweiz</div></header><main class="days"><section class="day"><h2>Heute</h2><div class="icon">🌧️</div>
             <strong>7.1° / 14.3°</strong>
-            <div class="wind">↝ 17 km/h · Böen 58</div>
+            <div class="wind">🌬️ Wind 17 km/h · Böen 58 km/h</div>
+            <div class="probability">Max. 100 % Regen</div>
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten"><span class="bar" style="height:100%" title="00–03 Uhr: 100% Regenwahrscheinlichkeit"></span><span class="bar" style="height:94.0%" title="03–06 Uhr: 94% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="06–09 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:53.0%" title="09–12 Uhr: 53% Regenwahrscheinlichkeit"></span><span class="bar" style="height:90.0%" title="12–15 Uhr: 90% Regenwahrscheinlichkeit"></span><span class="bar" style="height:96.0%" title="15–18 Uhr: 96% Regenwahrscheinlichkeit"></span><span class="bar" style="height:24.0%" title="18–21 Uhr: 24% Regenwahrscheinlichkeit"></span><span class="bar" style="height:6.0%" title="21–24 Uhr: 6% Regenwahrscheinlichkeit"></span></div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
             <div class="rain">💧 5.4 mm / Tag</div></section><section class="day"><h2>Morgen</h2><div class="icon">🌤️</div>
             <strong>4.9° / 11.9°</strong>
-            <div class="wind">↝ 5 km/h</div>
+            <div class="wind">🌬️ Wind 5 km/h</div>
+            <div class="probability">Max. 2 % Regen</div>
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten"><span class="bar" style="height:3%" title="00–03 Uhr: 2% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="03–06 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="06–09 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="09–12 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="12–15 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="15–18 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="18–21 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="21–24 Uhr: 0% Regenwahrscheinlichkeit"></span></div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
-            <div class="rain">💧 0 mm / Tag</div></section><section class="day"><h2>Tue 27.10.</h2><div class="icon">🌤️</div>
+            <div class="rain">💧 0 mm / Tag</div></section><section class="day"><h2>Di 27.10.</h2><div class="icon">🌤️</div>
             <strong>6.2° / 15.6°</strong>
-            <div class="wind">↝ 4 km/h</div>
+            <div class="wind">🌬️ Wind 4 km/h</div>
+            <div class="probability">Max. 0 % Regen</div>
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten"><span class="bar" style="height:3%" title="00–03 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="03–06 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="06–09 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="09–12 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="12–15 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="15–18 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="18–21 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="21–24 Uhr: 0% Regenwahrscheinlichkeit"></span></div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
-            <div class="rain">💧 0 mm / Tag</div></section><section class="day"><h2>Wed 28.10.</h2><div class="icon">🌧️</div>
+            <div class="rain">💧 0 mm / Tag</div></section><section class="day"><h2>Mi 28.10.</h2><div class="icon">🌧️</div>
             <strong>8.4° / 12.6°</strong>
-            <div class="wind">↝ 5 km/h</div>
+            <div class="wind">🌬️ Wind 5 km/h</div>
+            <div class="probability">Max. 29 % Regen</div>
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten"><span class="bar" style="height:6.0%" title="00–03 Uhr: 6% Regenwahrscheinlichkeit"></span><span class="bar" style="height:20.0%" title="03–06 Uhr: 20% Regenwahrscheinlichkeit"></span><span class="bar" style="height:25.0%" title="06–09 Uhr: 25% Regenwahrscheinlichkeit"></span><span class="bar" style="height:29.0%" title="09–12 Uhr: 29% Regenwahrscheinlichkeit"></span><span class="bar" style="height:16.0%" title="12–15 Uhr: 16% Regenwahrscheinlichkeit"></span><span class="bar" style="height:8.0%" title="15–18 Uhr: 8% Regenwahrscheinlichkeit"></span><span class="bar" style="height:10.0%" title="18–21 Uhr: 10% Regenwahrscheinlichkeit"></span><span class="bar" style="height:12.0%" title="21–24 Uhr: 12% Regenwahrscheinlichkeit"></span></div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
-            <div class="rain">💧 0.2 mm / Tag</div></section><section class="day"><h2>Thu 29.10.</h2><div class="icon">🌧️</div>
+            <div class="rain">💧 0.2 mm / Tag</div></section><section class="day"><h2>Do 29.10.</h2><div class="icon">🌧️</div>
             <strong>6.2° / 11.2°</strong>
-            <div class="wind">↝ 5 km/h</div>
+            <div class="wind">🌬️ Wind 5 km/h</div>
+            <div class="probability">Max. 22 % Regen</div>
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten"><span class="bar" style="height:18.0%" title="00–03 Uhr: 18% Regenwahrscheinlichkeit"></span><span class="bar" style="height:22.0%" title="03–06 Uhr: 22% Regenwahrscheinlichkeit"></span><span class="bar" style="height:16.0%" title="06–09 Uhr: 16% Regenwahrscheinlichkeit"></span><span class="bar" style="height:14.0%" title="09–12 Uhr: 14% Regenwahrscheinlichkeit"></span><span class="bar" style="height:8.0%" title="12–15 Uhr: 8% Regenwahrscheinlichkeit"></span><span class="bar" style="height:6.0%" title="15–18 Uhr: 6% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="18–21 Uhr: 2% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="21–24 Uhr: 0% Regenwahrscheinlichkeit"></span></div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
-            <div class="rain">💧 0 mm / Tag</div></section></main><p class="legend">Blaue Balken: Regenwahrscheinlichkeit (%) für jeweils 3 Stunden · 0–24 Uhr. Balken antippen/mit Maus berühren für genaue Prozentwerte.</p><a class="radar" target="_blank" rel="noopener" href="https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/niederschlag.html">🌧️ Regenradar öffnen</a><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: 25.10.2026 16:39</footer></body></html>
+            <div class="rain">💧 0 mm / Tag</div></section></main><p class="legend">Blaue Balken: Regenwahrscheinlichkeit (%) für jeweils 3 Stunden · 0–24 Uhr. Höchster Wert pro Tag zusätzlich über den Balken.</p><a class="radar" target="_blank" rel="noopener" href="https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/niederschlag.html">🌧️ Regenradar öffnen</a><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: 25.10.2026 18:29</footer></body></html>
