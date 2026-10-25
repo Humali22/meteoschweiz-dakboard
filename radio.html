@@ -30,7 +30,7 @@ input[type=range]{accent-color:#1d6eb0;min-width:90px;width:115px}
 <header><h1>📻 Familienradio</h1><small>Tippen zum Abspielen</small></header>
 <div class="controls" role="group" aria-label="Radiosender">
 <button class="station" type="button" data-station="srf1" aria-pressed="false">▶ SRF 1</button>
-<button class="station" type="button" data-station="srf2" aria-pressed="false">▶ SRF 2 Kultur</button>
+<button class="station" type="button" data-station="srf3" aria-pressed="false">▶ SRF 3</button>
 <button class="station" type="button" data-station="pilatus" aria-pressed="false">▶ Radio Pilatus</button>
 <button class="stop" type="button" id="stop">■ Stopp</button>
 </div>
@@ -41,7 +41,7 @@ input[type=range]{accent-color:#1d6eb0;min-width:90px;width:115px}
 'use strict';
 const streams={
  srf1:{name:'SRF 1',url:'https://stream.srg-ssr.ch/srgssr/srf1/mp3/128'},
- srf2:{name:'SRF 2 Kultur',url:'https://stream.srg-ssr.ch/srgssr/srf2/mp3/128'},
+ srf3:{name:'SRF 3',url:'https://stream.srg-ssr.ch/srgssr/srf3/mp3/128'},
  pilatus:{name:'Radio Pilatus',url:'https://stream.streambase.ch/radiopilatus/mp3-128/stream.streambase.ch/'}
 };
 const radio=document.querySelector('#radio');
