@@ -1,15 +1,15 @@
 {
   "location": "Kriens",
   "source": "MeteoSchweiz Open Data",
-  "forecast_item": "20261026-ch",
-  "updated": "2026-10-26T22:41:43.353963+01:00",
+  "forecast_item": "20261027-ch",
+  "updated": "2026-10-27T01:54:12.303308+01:00",
   "days": [
     {
-      "date": "2026-10-26",
+      "date": "2026-10-27",
       "label": "Heute",
       "symbol": "🌤️",
-      "min_c": 6.4,
-      "max_c": 12.0,
+      "min_c": 8.8,
+      "max_c": 15.4,
       "rain_mm": 0.0,
       "rain_probability_3h": [
         0.0,
@@ -22,87 +22,87 @@
         0.0
       ],
       "wind_max_kmh": 4,
-      "gust_max_kmh": 14
-    },
-    {
-      "date": "2026-10-27",
-      "label": "Morgen",
-      "symbol": "🌤️",
-      "min_c": 5.6,
-      "max_c": 14.7,
-      "rain_mm": 0.0,
-      "rain_probability_3h": [
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0
-      ],
-      "wind_max_kmh": 4,
-      "gust_max_kmh": 7
+      "gust_max_kmh": 10
     },
     {
       "date": "2026-10-28",
-      "label": "Mi 28.10.",
+      "label": "Morgen",
       "symbol": "🌧️",
       "min_c": 8.2,
-      "max_c": 12.0,
-      "rain_mm": 0.7,
+      "max_c": 11.7,
+      "rain_mm": 1.8,
       "rain_probability_3h": [
-        0.0,
-        8.0,
-        29.0,
-        39.0,
+        2.0,
+        14.0,
+        67.0,
+        69.0,
         24.0,
-        22.0,
-        12.0,
-        6.0
+        6.0,
+        6.0,
+        4.0
       ],
-      "wind_max_kmh": 5,
-      "gust_max_kmh": 16
+      "wind_max_kmh": 6,
+      "gust_max_kmh": 22
     },
     {
       "date": "2026-10-29",
       "label": "Do 29.10.",
       "symbol": "🌧️",
-      "min_c": 7.0,
-      "max_c": 10.4,
+      "min_c": 6.6,
+      "max_c": 8.9,
       "rain_mm": 0.0,
       "rain_probability_3h": [
+        2.0,
+        2.0,
         8.0,
         4.0,
-        6.0,
-        4.0,
-        4.0,
-        0.0,
         2.0,
-        2.0
+        0.0,
+        0.0,
+        0.0
       ],
       "wind_max_kmh": 5,
-      "gust_max_kmh": 17
+      "gust_max_kmh": 15
     },
     {
       "date": "2026-10-30",
       "label": "Fr 30.10.",
       "symbol": "🌧️",
       "min_c": 5.5,
-      "max_c": 10.1,
+      "max_c": 9.3,
       "rain_mm": 0.0,
       "rain_probability_3h": [
+        0.0,
+        0.0,
+        2.0,
         4.0,
-        4.0,
-        8.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "wind_max_kmh": 5,
+      "gust_max_kmh": 15
+    },
+    {
+      "date": "2026-10-31",
+      "label": "Sa 31.10.",
+      "symbol": "🌧️",
+      "min_c": 4.9,
+      "max_c": 9.1,
+      "rain_mm": 0.0,
+      "rain_probability_3h": [
+        6.0,
         6.0,
         4.0,
         4.0,
         0.0,
-        2.0
+        0.0,
+        0.0,
+        0.0
       ],
       "wind_max_kmh": 5,
-      "gust_max_kmh": 16
+      "gust_max_kmh": 15
     }
   ]
 }
