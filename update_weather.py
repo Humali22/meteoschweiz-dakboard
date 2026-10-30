@@ -1,6 +1,7 @@
 """MeteoSchweiz E4 forecast for Kriens; create static GitHub Pages dashboard."""
 import csv
 import io
+import math
 import json
 import re
 import urllib.request
@@ -16,6 +17,8 @@ PARAMS = DAILY + HOURLY
 POINT_ID, POINT_TYPE = '601000', '2'
 TZ = ZoneInfo('Europe/Zurich')
 RADAR = 'https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/niederschlag.html'
+MEASUREMENTS_URL = 'https://data.geo.admin.ch/ch.meteoschweiz.messwerte-aktuell/VQHA80.csv'
+MEASUREMENT_STATION = 'LUZ'  # Luzern; Messstation in der Nähe von Kriens
 
 
 def fetch(url):
@@ -218,7 +221,36 @@ def weather_symbol(code):
 
 
 def fmt_temp(n):
-    return '–' if n is None else f'{n:g}°'
+    # Klassisches kaufmännisches Runden statt Pythons Rundung auf gerade Zahlen.
+    if n is None:
+        return '–'
+    rounded = math.floor(n + 0.5) if n >= 0 else math.ceil(n - 0.5)
+    return f'{rounded}°'
+
+
+def read_current_measurement():
+    """Latest measured air temperature, Luzern SMN station, UTC timestamp.
+
+    Noncritical: if observation service is unavailable, forecast still works.
+    """
+    try:
+        raw = fetch(MEASUREMENTS_URL).decode('latin-1')
+        lines = [line for line in raw.splitlines() if ';' in line]
+        rows = csv.DictReader(io.StringIO('\n'.join(lines)), delimiter=';')
+        for row in rows:
+            if (row.get('stn') or '').strip().upper() != MEASUREMENT_STATION:
+                continue
+            value = convert((row.get('tre200s0') or '').strip())
+            stamp = (row.get('time') or '').strip()
+            if value is None or not re.fullmatch(r'\d{12}', stamp):
+                return None
+            at = local_datetime(stamp)
+            if abs((datetime.now(TZ) - at).total_seconds()) > 4 * 3600:
+                return None  # keine überalterte Messung als aktuell ausgeben
+            return {'temperature_c': value, 'station': 'Luzern', 'measured_at': at.isoformat()}
+    except Exception as err:
+        print('Messwert Luzern vorübergehend nicht verfügbar:', err)
+    return None
 
 
 def fmt_num(n):
@@ -258,8 +290,9 @@ def main():
     if all(day['min_c'] is None and day['max_c'] is None for day in days):
         raise RuntimeError('Keine Tages-Temperaturen gefunden')
     updated = datetime.now(TZ)
+    current = read_current_measurement()
     payload = {'location': 'Kriens', 'source': 'MeteoSchweiz Open Data', 'forecast_item': item['id'],
-               'updated': updated.isoformat(), 'days': days}
+               'updated': updated.isoformat(), 'current_measurement': current, 'days': days}
     Path('weather.json').write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding='utf-8')
 
     cards = []
@@ -286,13 +319,29 @@ def main():
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten">{''.join(bars)}</div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
             <div class="rain" title="Niederschlagsmenge pro Tag">💧 {fmt_num(day['rain_mm'])} mm</div></section>''')
+    # Das Symbol ist eine Kriens-Tagesprognose, keine gemessene Wetterbeobachtung.
+    # Die Temperatur stammt aus einer echten MeteoSchweiz-Messung in Luzern.
+    if current:
+        measured_time = datetime.fromisoformat(current['measured_at']).strftime('%H:%M')
+        current_header = ('<span class="current-weather" title="Temperatur-Messstation Luzern, ' +
+                          escape(measured_time) + ' Uhr; Symbol: heutige Prognose für Kriens">' +
+                          '<span class="current-icon">' + weather_symbol(days[0]['symbol_code']) + '</span>' +
+                          '<span class="current-temp">' + fmt_temp(current['temperature_c']) + '</span>' +
+                          '<span class="measured-at">Luzern · ' + escape(measured_time) + '</span></span>')
+    else:
+        current_header = '<span class="measured-at">Messwert derzeit nicht verfügbar</span>'
     html = '''<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="refresh" content="3600"><meta name="source" content="MeteoSchweiz Open Data"><title>Wetter Kriens – MeteoSchweiz</title>
 <!-- Design: Dunkel & gemuetlich, weisse Wetter-Icons, kompakte Windzeile -->
 <style>
 *{box-sizing:border-box}
 body{font-family:system-ui,Arial,sans-serif;background:#263740;color:#f7f3eb;margin:0;padding:12px}
-header{display:flex;justify-content:space-between;gap:8px;align-items:center}
+header{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.header-left{display:flex;align-items:center;gap:15px;min-width:0}
+.current-weather{display:inline-flex;gap:8px;align-items:center;color:#fff;white-space:nowrap}
+.current-icon svg{display:block;width:31px;height:31px;color:#fff}
+.current-temp{font-size:24px;font-weight:800}
+.measured-at{font-size:10px;color:#b7c9d2;white-space:nowrap}
 header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
 .days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:10px}
 .day{background:#334b59;border:1px solid #536975;border-radius:11px;padding:9px 5px 8px;text-align:center;min-width:0;display:flex;flex-direction:column;align-items:center}
@@ -303,7 +352,7 @@ header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
 .day h2{margin:0;font-size:38px;font-weight:750;color:#fff}
 .icon{height:95px;display:flex;align-items:center;justify-content:center;color:#fff;margin:3px auto 1px}
 .icon svg{width:88px;height:88px;display:block;color:#fff}
-.day strong{font-size:40px;white-space:nowrap;color:#fff;font-weight:750}
+.day strong{font-size:32px;white-space:nowrap;color:#fff;font-weight:750}
 .wind{font-size:29px;color:#fff;white-space:nowrap;margin-top:4px;line-height:1.2;min-height:20px}
 .wind .arrow{font-size:33px;line-height:1;vertical-align:-1px;font-weight:700}
 .probability{font-size:32px;font-weight:700;color:#a8e1f7;margin-top:5px;white-space:nowrap}
@@ -317,18 +366,18 @@ header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
 footer{display:none}
 /* Auf kleinen DAKboard-Blöcken werden die Grössen begrenzt, damit alle fünf Kacheln lesbar bleiben. */
 @media(max-width:850px){
-body{padding:6px}header h1{font-size:clamp(19px,3vw,24px)}.radar{padding:5px 7px;font-size:11px}
+body{padding:6px}header h1{font-size:clamp(17px,3vw,24px)}.radar{padding:5px 7px;font-size:11px}.header-left{gap:7px}.current-weather{gap:4px}.current-temp{font-size:clamp(17px,3vw,24px)}.current-icon svg{width:clamp(22px,3.8vw,31px);height:clamp(22px,3.8vw,31px)}.measured-at{font-size:9px}
 .days{gap:3px;margin-top:8px}.day{padding:7px 1px 6px}
 .day h2{font-size:clamp(15px,3.2vw,30px)}
 .icon{height:clamp(40px,10vw,77px)}.icon svg{width:clamp(38px,9.5vw,73px);height:clamp(38px,9.5vw,73px)}
-.day strong{font-size:clamp(12px,3.45vw,31px);letter-spacing:-.55px}
+.day strong{font-size:clamp(11px,3.1vw,27px);letter-spacing:-.55px}
 .wind{font-size:clamp(10px,2.9vw,25px);min-height:0}.wind .arrow{font-size:1.1em}
 .probability{font-size:clamp(11px,3.1vw,27px);letter-spacing:-.5px}
 .rain{font-size:clamp(10px,2.95vw,25px)}
 .bars{height:20px;width:80%;gap:0.5px}.hours{font-size:8px;width:85%}
 }
 
-</style></head><body><header><h1>Wetter Kriens</h1><a class="radar" target="_blank" rel="noopener" href="''' + RADAR + '''">Regenradar</a></header><main class="days">''' + ''.join(cards) + '''</main><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: ''' + escape(updated.strftime('%d.%m.%Y %H:%M')) + '''</footer></body></html>'''
+</style></head><body><header><div class="header-left"><h1>Wetter Kriens aktuell</h1>''' + current_header + '''</div><a class="radar" target="_blank" rel="noopener" href="''' + RADAR + '''">Regenradar</a></header><main class="days">''' + ''.join(cards) + '''</main><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: ''' + escape(updated.strftime('%d.%m.%Y %H:%M')) + '''</footer></body></html>'''
     Path('index.html').write_text(html, encoding='utf-8')
     print('Generated five-day forecast:', item['id'])
 
