@@ -2,12 +2,13 @@
   "location": "Kriens",
   "source": "MeteoSchweiz Open Data",
   "forecast_item": "20261030-ch",
-  "updated": "2026-10-30T14:00:44.960194+01:00",
+  "updated": "2026-10-30T14:05:03.708711+01:00",
   "days": [
     {
       "date": "2026-10-30",
       "label": "Heute",
       "symbol": "🌧️",
+      "symbol_code": "35",
       "min_c": 6.3,
       "max_c": 8.8,
       "rain_mm": 0.0,
@@ -22,12 +23,16 @@
         2.0
       ],
       "wind_max_kmh": 5,
-      "gust_max_kmh": 14
+      "gust_max_kmh": 14,
+      "wind_dir_deg": 287.0,
+      "wind_dir_cardinal": "W",
+      "wind_dir_arrow": "←"
     },
     {
       "date": "2026-10-31",
       "label": "Morgen",
       "symbol": "🌧️",
+      "symbol_code": "35",
       "min_c": 4.7,
       "max_c": 8.2,
       "rain_mm": 0.0,
@@ -42,12 +47,16 @@
         4.0
       ],
       "wind_max_kmh": 6,
-      "gust_max_kmh": 16
+      "gust_max_kmh": 16,
+      "wind_dir_deg": 347.0,
+      "wind_dir_cardinal": "N",
+      "wind_dir_arrow": "↑"
     },
     {
       "date": "2026-11-01",
       "label": "So 01.11.",
       "symbol": "🌤️",
+      "symbol_code": "3",
       "min_c": 3.9,
       "max_c": 8.4,
       "rain_mm": 0.0,
@@ -62,12 +71,16 @@
         6.0
       ],
       "wind_max_kmh": 12,
-      "gust_max_kmh": 34
+      "gust_max_kmh": 34,
+      "wind_dir_deg": 26.0,
+      "wind_dir_cardinal": "NO",
+      "wind_dir_arrow": "↗"
     },
     {
       "date": "2026-11-02",
       "label": "Mo 02.11.",
       "symbol": "🌧️",
+      "symbol_code": "35",
       "min_c": 3.6,
       "max_c": 6.5,
       "rain_mm": 0.1,
@@ -82,12 +95,16 @@
         16.0
       ],
       "wind_max_kmh": 7,
-      "gust_max_kmh": 20
+      "gust_max_kmh": 20,
+      "wind_dir_deg": 358.0,
+      "wind_dir_cardinal": "N",
+      "wind_dir_arrow": "↑"
     },
     {
       "date": "2026-11-03",
       "label": "Di 03.11.",
       "symbol": "🌧️",
+      "symbol_code": "35",
       "min_c": 3.8,
       "max_c": 6.7,
       "rain_mm": 0.2,
@@ -102,7 +119,10 @@
         6.0
       ],
       "wind_max_kmh": 6,
-      "gust_max_kmh": 18
+      "gust_max_kmh": 18,
+      "wind_dir_deg": 355.0,
+      "wind_dir_cardinal": "N",
+      "wind_dir_arrow": "↑"
     }
   ]
 }

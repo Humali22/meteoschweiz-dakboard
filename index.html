@@ -1,42 +1,65 @@
 <!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="refresh" content="3600"><title>Wetter Kriens – MeteoSchweiz</title>
-<style>*{box-sizing:border-box}body{font-family:system-ui,Arial,sans-serif;background:#263740;color:#f7f3eb;margin:0;padding:12px}
-header{display:flex;justify-content:space-between;gap:8px;align-items:center}header h1{font-size:18px;margin:0;color:#fff9f0}.source{font-size:11px;color:#c0d0d4}
-.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:7px}.day{background:#334b59;border:1px solid #536975;border-radius:11px;padding:8px 5px;text-align:center;min-width:0}
-.day:nth-child(2){background:#435048;border-color:#607064}.day:nth-child(3){background:#554a4b;border-color:#776367}.day:nth-child(4){background:#374c59;border-color:#567080}.day:nth-child(5){background:#47534f;border-color:#64756d}
-.day h2{margin:0;font-size:13px;color:#fffaf3}.icon{font-size:27px;margin:3px 0}.day strong{font-size:16px;white-space:nowrap;color:#fffaf3}.wind,.rain{font-size:11px;color:#e1e8e4;margin-top:4px}.probability{font-size:11px;font-weight:700;color:#a8e1f7;margin-top:4px}
-.bars{height:40px;display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid #899fa7;margin:6px 3px 0}.bar{display:block;background:#7ecae8;flex:1;border-radius:2px 2px 0 0;min-width:0}.bar.missing{background:#61727a;height:2px}
-.hours{display:flex;justify-content:space-between;font-size:9px;color:#d0dbdd;padding:2px 2px 0}.legend{font-size:11px;color:#d4e0de;margin:9px 0 0}
-.radar{display:block;text-align:center;background:#415b69;color:#f1fbff;border:1px solid #7095a5;padding:7px;border-radius:9px;margin-top:7px;font-size:13px;text-decoration:none;font-weight:650}.radar:focus,.radar:hover{background:#527487}
-footer{font-size:10px;color:#c0d0d4;margin-top:8px}@media(max-width:600px){body{padding:6px}.days{gap:3px}.day{padding:7px 2px}.day h2{font-size:10px}.icon{font-size:24px}.day strong{font-size:12px}.wind,.rain,.probability{font-size:9px}.bars{gap:1px}}
-</style></head><body><header><h1>🌤️ Wetter Kriens</h1><div class="source">MeteoSchweiz</div></header><main class="days"><section class="day"><h2>Heute</h2><div class="icon">🌧️</div>
+<!-- Design: Dunkel & gemuetlich, weisse Wetter-Icons, kompakte Windzeile -->
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,Arial,sans-serif;background:#263740;color:#f7f3eb;margin:0;padding:12px}
+header{display:flex;justify-content:space-between;gap:8px;align-items:center}
+header .heading{display:flex;align-items:center;gap:7px;min-width:0}
+header .heading svg{width:22px;height:22px;flex-shrink:0;color:#fff;}
+header h1{font-size:18px;margin:0;font-weight:520;color:#fff;white-space:nowrap}
+.source{font-size:11px;color:#c0d0d4;white-space:nowrap}
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:10px}
+.day{background:#334b59;border:1px solid #536975;border-radius:11px;padding:9px 5px 8px;text-align:center;min-width:0;display:flex;flex-direction:column;align-items:center}
+.day:nth-child(2){background:#435048;border-color:#607064}
+.day:nth-child(3){background:#554a4b;border-color:#776367}
+.day:nth-child(4){background:#374c59;border-color:#567080}
+.day:nth-child(5){background:#47534f;border-color:#64756d}
+.day h2{margin:0;font-size:13px;font-weight:550;color:#fff}
+.icon{height:40px;display:flex;align-items:center;justify-content:center;color:#fff;margin:3px auto 1px}
+.icon svg{width:34px;height:34px;display:block;color:#fff}
+.day strong{font-size:15px;white-space:nowrap;color:#fff;font-weight:650}
+.wind{font-size:10px;color:#fff;white-space:nowrap;margin-top:4px;line-height:1.2;min-height:14px}
+.wind .arrow{font-size:13px;line-height:1;vertical-align:-1px;font-weight:700}
+.probability{font-size:11px;font-weight:700;color:#a8e1f7;margin-top:5px;white-space:nowrap}
+.bars{height:40px;width:calc(100% - 4px);display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid #899fa7;margin:6px 2px 0}
+.bar{display:block;background:#7ecae8;flex:1;border-radius:2px 2px 0 0;min-width:0}
+.bar.missing{background:#61727a;height:2px}
+.hours{width:100%;display:flex;justify-content:space-between;font-size:9px;color:#d0dbdd;padding:2px 2px 0}
+.rain{font-size:10px;color:#fff;margin-top:5px;white-space:nowrap}
+.radar{display:flex;align-items:center;justify-content:center;gap:8px;background:#415b69;color:#fff;border:1px solid #7095a5;padding:8px;border-radius:9px;margin-top:7px;font-size:13px;text-decoration:none;font-weight:550}
+.radar svg{height:20px;width:20px;color:#fff}
+.radar:focus,.radar:hover{background:#527487}
+footer{font-size:10px;color:#c0d0d4;margin-top:8px}
+@media(max-width:600px){body{padding:6px}.days{gap:3px;margin-top:8px}.day{padding:7px 2px 6px}.day h2{font-size:10px}.icon{height:33px}.icon svg{width:29px;height:29px}.day strong{font-size:12px}.wind{font-size:9px}.wind .arrow{font-size:11px}.probability{font-size:9px}.rain{font-size:9px}.bars{gap:1px}.hours{font-size:8px}}
+</style></head><body><header><div class="heading"><svg viewBox="0 0 24 24" aria-label="Sonne und Wolken" role="img" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7" r="3"/><path d="M8 1v2M2 7h2m6.8-4.8L12 1M3.2 3.2 4.7 4.7"/><path d="M7.5 18h11A4.5 4.5 0 0 0 19 9a6.5 6.5 0 0 0-12.1-1.8A5.4 5.4 0 0 0 7.5 18Z"/></svg><h1>Wetter Kriens</h1></div><div class="source">MeteoSchweiz</div></header><main class="days"><section class="day"><h2>Heute</h2><div class="icon"><svg viewBox="0 0 24 24" aria-label="Bewölkt" role="img" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 18h11A4.5 4.5 0 0 0 19 9a6.5 6.5 0 0 0-12.1-1.8A5.4 5.4 0 0 0 7.5 18Z"/></svg></div>
             <strong>6.3° / 8.8°</strong>
-            <div class="wind">🌬️ Wind 5 km/h</div>
-            <div class="probability">Max. 4 % Regen</div>
+            <div class="wind" title="Stärkster stündlicher Mittelwind: 5 km/h; Herkunftsrichtung: W"><span class="arrow">←</span> 5 km/h</div>
+            <div class="probability">Max. 4%</div>
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten"><span class="bar" style="height:4.0%" title="00–03 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="03–06 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="06–09 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="09–12 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="12–15 Uhr: 2% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="15–18 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="18–21 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="21–24 Uhr: 2% Regenwahrscheinlichkeit"></span></div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
-            <div class="rain">💧 0 mm / Tag</div></section><section class="day"><h2>Morgen</h2><div class="icon">🌧️</div>
+            <div class="rain" title="Niederschlagsmenge pro Tag">💧 0 mm</div></section><section class="day"><h2>Morgen</h2><div class="icon"><svg viewBox="0 0 24 24" aria-label="Bewölkt" role="img" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 18h11A4.5 4.5 0 0 0 19 9a6.5 6.5 0 0 0-12.1-1.8A5.4 5.4 0 0 0 7.5 18Z"/></svg></div>
             <strong>4.7° / 8.2°</strong>
-            <div class="wind">🌬️ Wind 6 km/h</div>
-            <div class="probability">Max. 6 % Regen</div>
+            <div class="wind" title="Stärkster stündlicher Mittelwind: 6 km/h; Herkunftsrichtung: N"><span class="arrow">↑</span> 6 km/h</div>
+            <div class="probability">Max. 6%</div>
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten"><span class="bar" style="height:4.0%" title="00–03 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="03–06 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:6.0%" title="06–09 Uhr: 6% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="09–12 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="12–15 Uhr: 2% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="15–18 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:3%" title="18–21 Uhr: 0% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="21–24 Uhr: 4% Regenwahrscheinlichkeit"></span></div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
-            <div class="rain">💧 0 mm / Tag</div></section><section class="day"><h2>So 01.11.</h2><div class="icon">🌤️</div>
+            <div class="rain" title="Niederschlagsmenge pro Tag">💧 0 mm</div></section><section class="day"><h2>So 01.11.</h2><div class="icon"><svg viewBox="0 0 24 24" aria-label="Sonne und Wolken" role="img" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7" r="3"/><path d="M8 1v2M2 7h2m6.8-4.8L12 1M3.2 3.2 4.7 4.7"/><path d="M7.5 18h11A4.5 4.5 0 0 0 19 9a6.5 6.5 0 0 0-12.1-1.8A5.4 5.4 0 0 0 7.5 18Z"/></svg></div>
             <strong>3.9° / 8.4°</strong>
-            <div class="wind">🌬️ Wind 12 km/h</div>
-            <div class="probability">Max. 6 % Regen</div>
+            <div class="wind" title="Stärkster stündlicher Mittelwind: 12 km/h; Herkunftsrichtung: NO"><span class="arrow">↗</span> 12 km/h</div>
+            <div class="probability">Max. 6%</div>
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten"><span class="bar" style="height:3%" title="00–03 Uhr: 2% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="03–06 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="06–09 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:6.0%" title="09–12 Uhr: 6% Regenwahrscheinlichkeit"></span><span class="bar" style="height:6.0%" title="12–15 Uhr: 6% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="15–18 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:4.0%" title="18–21 Uhr: 4% Regenwahrscheinlichkeit"></span><span class="bar" style="height:6.0%" title="21–24 Uhr: 6% Regenwahrscheinlichkeit"></span></div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
-            <div class="rain">💧 0 mm / Tag</div></section><section class="day"><h2>Mo 02.11.</h2><div class="icon">🌧️</div>
+            <div class="rain" title="Niederschlagsmenge pro Tag">💧 0 mm</div></section><section class="day"><h2>Mo 02.11.</h2><div class="icon"><svg viewBox="0 0 24 24" aria-label="Bewölkt" role="img" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 18h11A4.5 4.5 0 0 0 19 9a6.5 6.5 0 0 0-12.1-1.8A5.4 5.4 0 0 0 7.5 18Z"/></svg></div>
             <strong>3.6° / 6.5°</strong>
-            <div class="wind">🌬️ Wind 7 km/h</div>
-            <div class="probability">Max. 16 % Regen</div>
+            <div class="wind" title="Stärkster stündlicher Mittelwind: 7 km/h; Herkunftsrichtung: N"><span class="arrow">↑</span> 7 km/h</div>
+            <div class="probability">Max. 16%</div>
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten"><span class="bar" style="height:6.0%" title="00–03 Uhr: 6% Regenwahrscheinlichkeit"></span><span class="bar" style="height:14.0%" title="03–06 Uhr: 14% Regenwahrscheinlichkeit"></span><span class="bar" style="height:10.0%" title="06–09 Uhr: 10% Regenwahrscheinlichkeit"></span><span class="bar" style="height:10.0%" title="09–12 Uhr: 10% Regenwahrscheinlichkeit"></span><span class="bar" style="height:8.0%" title="12–15 Uhr: 8% Regenwahrscheinlichkeit"></span><span class="bar" style="height:8.0%" title="15–18 Uhr: 8% Regenwahrscheinlichkeit"></span><span class="bar" style="height:14.0%" title="18–21 Uhr: 14% Regenwahrscheinlichkeit"></span><span class="bar" style="height:16.0%" title="21–24 Uhr: 16% Regenwahrscheinlichkeit"></span></div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
-            <div class="rain">💧 0.1 mm / Tag</div></section><section class="day"><h2>Di 03.11.</h2><div class="icon">🌧️</div>
+            <div class="rain" title="Niederschlagsmenge pro Tag">💧 0.1 mm</div></section><section class="day"><h2>Di 03.11.</h2><div class="icon"><svg viewBox="0 0 24 24" aria-label="Bewölkt" role="img" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 18h11A4.5 4.5 0 0 0 19 9a6.5 6.5 0 0 0-12.1-1.8A5.4 5.4 0 0 0 7.5 18Z"/></svg></div>
             <strong>3.8° / 6.7°</strong>
-            <div class="wind">🌬️ Wind 6 km/h</div>
-            <div class="probability">Max. 27 % Regen</div>
+            <div class="wind" title="Stärkster stündlicher Mittelwind: 6 km/h; Herkunftsrichtung: N"><span class="arrow">↑</span> 6 km/h</div>
+            <div class="probability">Max. 27%</div>
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten"><span class="bar" style="height:18.0%" title="00–03 Uhr: 18% Regenwahrscheinlichkeit"></span><span class="bar" style="height:20.0%" title="03–06 Uhr: 20% Regenwahrscheinlichkeit"></span><span class="bar" style="height:27.0%" title="06–09 Uhr: 27% Regenwahrscheinlichkeit"></span><span class="bar" style="height:20.0%" title="09–12 Uhr: 20% Regenwahrscheinlichkeit"></span><span class="bar" style="height:22.0%" title="12–15 Uhr: 22% Regenwahrscheinlichkeit"></span><span class="bar" style="height:16.0%" title="15–18 Uhr: 16% Regenwahrscheinlichkeit"></span><span class="bar" style="height:10.0%" title="18–21 Uhr: 10% Regenwahrscheinlichkeit"></span><span class="bar" style="height:6.0%" title="21–24 Uhr: 6% Regenwahrscheinlichkeit"></span></div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
-            <div class="rain">💧 0.2 mm / Tag</div></section></main><p class="legend">Blaue Balken: Regenwahrscheinlichkeit (%) für jeweils 3 Stunden · 0–24 Uhr. Höchster Wert pro Tag zusätzlich über den Balken.</p><a class="radar" target="_blank" rel="noopener" href="https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/niederschlag.html">🌧️ Regenradar öffnen</a><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: 30.10.2026 14:00</footer></body></html>
+            <div class="rain" title="Niederschlagsmenge pro Tag">💧 0.2 mm</div></section></main><a class="radar" target="_blank" rel="noopener" href="https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/niederschlag.html"><svg viewBox="0 0 24 24" aria-label="Regen" role="img" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 18h11A4.5 4.5 0 0 0 19 9a6.5 6.5 0 0 0-12.1-1.8A5.4 5.4 0 0 0 7.5 18Z"/><path d="m8 20-1 2m6-2-1 2m6-2-1 2"/></svg><span>Regenradar öffnen</span></a><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: 30.10.2026 14:05</footer></body></html>
