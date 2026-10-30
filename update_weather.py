@@ -176,14 +176,15 @@ def main():
             <div class="rain">💧 {fmt_num(day['rain_mm'])} mm / Tag</div></section>''')
     html = '''<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="refresh" content="3600"><title>Wetter Kriens – MeteoSchweiz</title>
-<style>*{box-sizing:border-box}body{font-family:system-ui,Arial,sans-serif;background:#f5f8fc;color:#243344;margin:0;padding:12px}
-header{display:flex;justify-content:space-between;gap:8px;align-items:center}header h1{font-size:18px;margin:0}.source{font-size:11px;color:#60738b}
-.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:7px}.day{background:#fff;border-radius:11px;padding:8px 5px;text-align:center;min-width:0}
-.day h2{margin:0;font-size:13px}.icon{font-size:27px;margin:3px 0}.day strong{font-size:16px;white-space:nowrap}.wind,.rain{font-size:11px;color:#536477;margin-top:4px}.probability{font-size:11px;font-weight:650;color:#236996;margin-top:4px}
-.bars{height:40px;display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid #bbc9d7;margin:6px 3px 0}.bar{display:block;background:#418fca;flex:1;border-radius:2px 2px 0 0;min-width:0}.bar.missing{background:#dce3ea;height:2px}
-.hours{display:flex;justify-content:space-between;font-size:9px;color:#64748b;padding:2px 2px 0}.legend{font-size:11px;color:#536477;margin:9px 0 0}
-.radar{display:block;text-align:center;background:#dce9f7;color:#17406f;padding:7px;border-radius:9px;margin-top:7px;font-size:13px;text-decoration:none;font-weight:600}
-footer{font-size:10px;color:#60738b;margin-top:8px}@media(max-width:600px){body{padding:6px}.days{gap:3px}.day{padding:7px 2px}.day h2{font-size:10px}.icon{font-size:24px}.day strong{font-size:12px}.wind,.rain,.probability{font-size:9px}.bars{gap:1px}}
+<style>*{box-sizing:border-box}body{font-family:system-ui,Arial,sans-serif;background:#263740;color:#f7f3eb;margin:0;padding:12px}
+header{display:flex;justify-content:space-between;gap:8px;align-items:center}header h1{font-size:18px;margin:0;color:#fff9f0}.source{font-size:11px;color:#c0d0d4}
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:7px}.day{background:#334b59;border:1px solid #536975;border-radius:11px;padding:8px 5px;text-align:center;min-width:0}
+.day:nth-child(2){background:#435048;border-color:#607064}.day:nth-child(3){background:#554a4b;border-color:#776367}.day:nth-child(4){background:#374c59;border-color:#567080}.day:nth-child(5){background:#47534f;border-color:#64756d}
+.day h2{margin:0;font-size:13px;color:#fffaf3}.icon{font-size:27px;margin:3px 0}.day strong{font-size:16px;white-space:nowrap;color:#fffaf3}.wind,.rain{font-size:11px;color:#e1e8e4;margin-top:4px}.probability{font-size:11px;font-weight:700;color:#a8e1f7;margin-top:4px}
+.bars{height:40px;display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid #899fa7;margin:6px 3px 0}.bar{display:block;background:#7ecae8;flex:1;border-radius:2px 2px 0 0;min-width:0}.bar.missing{background:#61727a;height:2px}
+.hours{display:flex;justify-content:space-between;font-size:9px;color:#d0dbdd;padding:2px 2px 0}.legend{font-size:11px;color:#d4e0de;margin:9px 0 0}
+.radar{display:block;text-align:center;background:#415b69;color:#f1fbff;border:1px solid #7095a5;padding:7px;border-radius:9px;margin-top:7px;font-size:13px;text-decoration:none;font-weight:650}.radar:focus,.radar:hover{background:#527487}
+footer{font-size:10px;color:#c0d0d4;margin-top:8px}@media(max-width:600px){body{padding:6px}.days{gap:3px}.day{padding:7px 2px}.day h2{font-size:10px}.icon{font-size:24px}.day strong{font-size:12px}.wind,.rain,.probability{font-size:9px}.bars{gap:1px}}
 </style></head><body><header><h1>🌤️ Wetter Kriens</h1><div class="source">MeteoSchweiz</div></header><main class="days">''' + ''.join(cards) + '''</main><p class="legend">Blaue Balken: Regenwahrscheinlichkeit (%) für jeweils 3 Stunden · 0–24 Uhr. Höchster Wert pro Tag zusätzlich über den Balken.</p><a class="radar" target="_blank" rel="noopener" href="''' + RADAR + '''">🌧️ Regenradar öffnen</a><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: ''' + escape(updated.strftime('%d.%m.%Y %H:%M')) + '''</footer></body></html>'''
     Path('index.html').write_text(html, encoding='utf-8')
     print('Generated five-day forecast:', item['id'])
