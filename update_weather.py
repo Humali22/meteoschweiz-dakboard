@@ -135,47 +135,83 @@ def wind_peak_and_direction(speed_series, direction_series, day):
 
 
 def weather_symbol(code):
-    """White, minimal line icons (own SVGs, not MeteoSwiss artwork)."""
+    """Eigene weisse SVG-Liniensymbole nach MeteoSchweiz-Piktogrammcode."""
     try:
-        number = int(code)
+        n = int(code)
     except (TypeError, ValueError):
-        number = 2
-    if number >= 100:
-        number -= 100  # MeteoSwiss night-symbol variants
-    if number == 1:
+        n = 3
+    if n >= 100:
+        n -= 100  # Tages- und Nachtvarianten mit gleicher Wetterart
+    rain_codes = {6, 9, 14, 17, 20, 29, 32, 33}
+    snow_codes = {8, 11, 16, 19, 22, 30, 34}
+    sleet_codes = {7, 10, 15, 18, 21, 31}
+    thunder_rain_codes = {12, 13, 23, 24, 25, 36, 38, 40, 41}
+    thunder_snow_codes = {37, 39, 42}
+    if n == 1:
         kind, title = 'sun', 'Sonnig'
-    elif number in (2, 3, 4, 26):
-        kind, title = 'partly', 'Sonne und Wolken'
-    elif number in (5, 27, 28, 35):
+    elif n in (2, 3, 4, 26):
+        kind, title = 'partly', 'Teilweise sonnig'
+    elif n == 5:
         kind, title = 'cloud', 'Bewölkt'
-    elif number in (8, 11, 16, 19, 22, 30, 34):
+    elif n == 35:
+        kind, title = 'overcast', 'Bedeckt'
+    elif n in (27, 28):
+        kind, title = 'fog', 'Hochnebel oder Nebel'
+    elif n in snow_codes:
         kind, title = 'snow', 'Schnee'
-    elif number in (7, 10, 15, 18, 21, 31):
-        kind, title = 'sleet', 'Schnee und Regen'
-    elif number in (12, 13, 23, 24, 25, 36, 37, 38, 39, 40, 41, 42):
-        kind, title = 'storm', 'Gewitter'
-    else:
+    elif n in sleet_codes:
+        kind, title = 'sleet', 'Schneeregen'
+    elif n in thunder_snow_codes:
+        kind, title = 'storm_snow', 'Gewitter mit Schnee'
+    elif n in thunder_rain_codes:
+        kind, title = 'storm_rain', 'Gewitter mit Regen'
+    elif n in rain_codes:
         kind, title = 'rain', 'Regen'
+    else:
+        kind, title = 'cloud', 'Bewölkt'
+    # Einheitliche Wolkenform: links grosser Bogen, rechts kleiner.
+    # Alle SVG-Pfade sind eigens gezeichnet, keine externen Grafiken.
     sun = ('<circle cx="12" cy="12" r="4"/>'
            '<path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>')
-    cloud = '<path d="M7.5 18h11A4.5 4.5 0 0 0 19 9a6.5 6.5 0 0 0-12.1-1.8A5.4 5.4 0 0 0 7.5 18Z"/>'
-    shower = '<path d="m8 20-1 2m6-2-1 2m6-2-1 2"/>'
-    snowfall = '<path d="M7 21h2m-1-1v2m4-1h2m-1-1v2m5-1h2m-1-1v2"/>'
-    bolt = '<path d="m13 18-2 4 4-2-1 3"/>'
+    # Offene Unterseite, damit Striche und Schneeflocken von der Wolke wegfallen.
+    cloud_open = '<path d="M7.2 17.5C4.4 17.5 2.8 15.7 2.8 13.1c0-2.8 2-4.7 4.7-4.8C8.3 4.3 11.4 2.7 14.2 3.2c3.2.5 5 2.9 5.1 5.9 2.9.1 4.2 2 4.2 4.3 0 2.5-1.7 4.1-4.2 4.1"/>'
+    cloud = cloud_open + '<path d="M7.2 17.5h12.1"/>'
+    # Bewölkt: zwei überlappende Wolken, kleine versetzt rechts unten.
+    second_cloud = '<path d="M15.9 18.7c.8-1.1 2-1.7 3.4-1.7 2.1 0 3.6 1.3 3.8 3.1 1.7.1 2.8 1.4 2.8 3 0 1.7-1.3 2.8-3.1 2.8h-8.2" transform="translate(-2 -1) scale(.94)"/>'
+    rain = '<path d="M7.7 19.3v3.3M13.2 19.3v3.3M18.7 19.3v3.3"/>'
+    rain_two = '<path d="M8 19.3v3.3M19 19.3v3.3"/>'
+    # Dreifach-Schneeflocke (kleine gekreuzte Striche statt Punkte).
+    def flake(x):
+        return (f'<path d="M{x} 19.6v4.4m-2.2-2.2h4.4m-1.6-1.6 3.2 3.2m0-3.2-3.2 3.2" '
+                'stroke-width=".95"/>')
+    snow = ''.join(flake(x) for x in (7.5, 13.2, 18.9))
+    sleet = flake(7.4) + '<path d="M14.4 19.3v3.5M19.8 19.3v3.5"/>'
+    hail = '<circle cx="8" cy="21.5" r="1"/><circle cx="13.2" cy="21.5" r="1"/><circle cx="18.6" cy="21.5" r="1"/>'
+    # Blitz als EIN Linienzug, mittig zwischen zwei Regenstrichen.
+    lightning = '<path d="m13.8 17.2-3 4.1h3.1l-2.1 3.9"/>'
+    fog = '<path d="M3 20h18M5 23h16"/>'
     if kind == 'sun':
         shapes = sun
-    elif kind == 'cloud':
-        shapes = cloud
     elif kind == 'partly':
-        shapes = ('<circle cx="8" cy="7" r="3"/>'
-                  '<path d="M8 1v2M2 7h2m6.8-4.8L12 1M3.2 3.2 4.7 4.7"/>' + cloud)
+        shapes = ('<circle cx="7.1" cy="6.2" r="3"/>'
+                  '<path d="M7.1 1v1.5M1.7 6.2h1.7M3.3 2.5l1.1 1.1M11.1 2.5 10 3.6"/>' + cloud)
+    elif kind == 'cloud':
+        shapes = cloud + second_cloud
+    elif kind == 'overcast':
+        shapes = cloud
+    elif kind == 'fog':
+        shapes = cloud_open + fog
+    elif kind == 'rain':
+        shapes = cloud_open + rain
+    elif kind == 'snow':
+        shapes = cloud_open + snow
+    elif kind == 'sleet':
+        shapes = cloud_open + sleet
+    elif kind == 'storm_snow':
+        shapes = cloud_open + lightning + flake(7.2) + flake(19.3)
     else:
-        shapes = cloud + (shower if kind in ('rain', 'sleet') else '')
-        if kind in ('snow', 'sleet'):
-            shapes += snowfall
-        if kind == 'storm':
-            shapes += bolt
-    return ('<svg viewBox="0 0 24 24" aria-label="' + escape(title) + '" '
+        shapes = cloud_open + lightning + rain_two
+    return ('<svg viewBox="0 0 24 26" aria-label="' + escape(title) + '" '
             'role="img" xmlns="http://www.w3.org/2000/svg" fill="none" '
             'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" '
             'stroke-linejoin="round">' + shapes + '</svg>')
@@ -205,7 +241,7 @@ def main():
         wind_cardinal, wind_arrow = cardinal_from_degrees(wind_dir_deg)
         day = {
             'date': date,
-            'label': ['Heute', 'Morgen'][offset] if offset < 2 else labels[cur.weekday()] + cur.strftime(' %d.%m.'),
+            'label': 'Heute' if offset == 0 else labels[cur.weekday()],
             'symbol': symbol_emoji(daily_symbols.get(date)),
             'symbol_code': daily_symbols.get(date),
             'min_c': daily['tre200pn'].get(date),
@@ -236,7 +272,7 @@ def main():
                 height = max(3, min(100, probability))
                 bars.append(f'<span class="bar" style="height:{height}%" title="{i*3:02d}–{(i+1)*3:02d} Uhr: {probability:g}% Regenwahrscheinlichkeit"></span>')
         available_probabilities = [p for p in day['rain_probability_3h'] if p is not None]
-        max_probability = (f'Max. {max(available_probabilities):g}%' if available_probabilities else 'Regen k. A.')
+        max_probability = (f'Max. {max(available_probabilities):g}%' if available_probabilities else 'k. A.')
         wind_speed = '–' if day['wind_max_kmh'] is None else f"{day['wind_max_kmh']} km/h"
         wind_dir_text = day['wind_dir_cardinal'] or 'unbekannt'
         wind_title = f"Stärkster stündlicher Mittelwind: {wind_speed}; Herkunftsrichtung: {wind_dir_text}"
@@ -250,43 +286,49 @@ def main():
             <div class="bars" role="img" aria-label="Regenwahrscheinlichkeit in drei-Stunden-Schritten">{''.join(bars)}</div>
             <div class="hours"><span>0</span><span>12</span><span>24 h</span></div>
             <div class="rain" title="Niederschlagsmenge pro Tag">💧 {fmt_num(day['rain_mm'])} mm</div></section>''')
-    header_icon = weather_symbol(2)
-    radar_icon = weather_symbol(14)
     html = '''<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="refresh" content="3600"><title>Wetter Kriens – MeteoSchweiz</title>
+<meta http-equiv="refresh" content="3600"><meta name="source" content="MeteoSchweiz Open Data"><title>Wetter Kriens – MeteoSchweiz</title>
 <!-- Design: Dunkel & gemuetlich, weisse Wetter-Icons, kompakte Windzeile -->
 <style>
 *{box-sizing:border-box}
 body{font-family:system-ui,Arial,sans-serif;background:#263740;color:#f7f3eb;margin:0;padding:12px}
 header{display:flex;justify-content:space-between;gap:8px;align-items:center}
-header .heading{display:flex;align-items:center;gap:7px;min-width:0}
-header .heading svg{width:22px;height:22px;flex-shrink:0;color:#fff;}
-header h1{font-size:18px;margin:0;font-weight:520;color:#fff;white-space:nowrap}
-.source{font-size:11px;color:#c0d0d4;white-space:nowrap}
-.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:10px}
+header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:10px}
 .day{background:#334b59;border:1px solid #536975;border-radius:11px;padding:9px 5px 8px;text-align:center;min-width:0;display:flex;flex-direction:column;align-items:center}
 .day:nth-child(2){background:#435048;border-color:#607064}
 .day:nth-child(3){background:#554a4b;border-color:#776367}
 .day:nth-child(4){background:#374c59;border-color:#567080}
 .day:nth-child(5){background:#47534f;border-color:#64756d}
-.day h2{margin:0;font-size:13px;font-weight:550;color:#fff}
-.icon{height:40px;display:flex;align-items:center;justify-content:center;color:#fff;margin:3px auto 1px}
-.icon svg{width:34px;height:34px;display:block;color:#fff}
-.day strong{font-size:15px;white-space:nowrap;color:#fff;font-weight:650}
-.wind{font-size:10px;color:#fff;white-space:nowrap;margin-top:4px;line-height:1.2;min-height:14px}
-.wind .arrow{font-size:13px;line-height:1;vertical-align:-1px;font-weight:700}
-.probability{font-size:11px;font-weight:700;color:#a8e1f7;margin-top:5px;white-space:nowrap}
-.bars{height:40px;width:calc(100% - 4px);display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid #899fa7;margin:6px 2px 0}
+.day h2{margin:0;font-size:38px;font-weight:750;color:#fff}
+.icon{height:95px;display:flex;align-items:center;justify-content:center;color:#fff;margin:3px auto 1px}
+.icon svg{width:88px;height:88px;display:block;color:#fff}
+.day strong{font-size:40px;white-space:nowrap;color:#fff;font-weight:750}
+.wind{font-size:29px;color:#fff;white-space:nowrap;margin-top:4px;line-height:1.2;min-height:20px}
+.wind .arrow{font-size:33px;line-height:1;vertical-align:-1px;font-weight:700}
+.probability{font-size:32px;font-weight:700;color:#a8e1f7;margin-top:5px;white-space:nowrap}
+.bars{height:20px;width:70%;display:flex;align-items:flex-end;gap:0.5px;border-bottom:1px solid #899fa7;margin:5px auto 0}
 .bar{display:block;background:#7ecae8;flex:1;border-radius:2px 2px 0 0;min-width:0}
 .bar.missing{background:#61727a;height:2px}
-.hours{width:100%;display:flex;justify-content:space-between;font-size:9px;color:#d0dbdd;padding:2px 2px 0}
-.rain{font-size:10px;color:#fff;margin-top:5px;white-space:nowrap}
-.radar{display:flex;align-items:center;justify-content:center;gap:8px;background:#415b69;color:#fff;border:1px solid #7095a5;padding:8px;border-radius:9px;margin-top:7px;font-size:13px;text-decoration:none;font-weight:550}
-.radar svg{height:20px;width:20px;color:#fff}
+.hours{width:72%;display:flex;justify-content:space-between;font-size:9px;color:#d0dbdd;padding:2px 2px 0}
+.rain{font-size:29px;font-weight:700;color:#a8e1f7;margin-top:5px;white-space:nowrap}
+.radar{display:inline-flex;align-items:center;justify-content:center;background:#415b69;color:#f1fbff;border:1px solid #7095a5;padding:6px 10px;border-radius:8px;font-size:12px;text-decoration:none;font-weight:600;white-space:nowrap}
 .radar:focus,.radar:hover{background:#527487}
-footer{font-size:10px;color:#c0d0d4;margin-top:8px}
-@media(max-width:600px){body{padding:6px}.days{gap:3px;margin-top:8px}.day{padding:7px 2px 6px}.day h2{font-size:10px}.icon{height:33px}.icon svg{width:29px;height:29px}.day strong{font-size:12px}.wind{font-size:9px}.wind .arrow{font-size:11px}.probability{font-size:9px}.rain{font-size:9px}.bars{gap:1px}.hours{font-size:8px}}
-</style></head><body><header><div class="heading">''' + header_icon + '''<h1>Wetter Kriens</h1></div><div class="source">MeteoSchweiz</div></header><main class="days">''' + ''.join(cards) + '''</main><a class="radar" target="_blank" rel="noopener" href="''' + RADAR + '''">''' + radar_icon + '''<span>Regenradar öffnen</span></a><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: ''' + escape(updated.strftime('%d.%m.%Y %H:%M')) + '''</footer></body></html>'''
+footer{display:none}
+/* Auf kleinen DAKboard-Blöcken werden die Grössen begrenzt, damit alle fünf Kacheln lesbar bleiben. */
+@media(max-width:850px){
+body{padding:6px}header h1{font-size:clamp(19px,3vw,24px)}.radar{padding:5px 7px;font-size:11px}
+.days{gap:3px;margin-top:8px}.day{padding:7px 1px 6px}
+.day h2{font-size:clamp(15px,3.2vw,30px)}
+.icon{height:clamp(40px,10vw,77px)}.icon svg{width:clamp(38px,9.5vw,73px);height:clamp(38px,9.5vw,73px)}
+.day strong{font-size:clamp(12px,3.45vw,31px);letter-spacing:-.55px}
+.wind{font-size:clamp(10px,2.9vw,25px);min-height:0}.wind .arrow{font-size:1.1em}
+.probability{font-size:clamp(11px,3.1vw,27px);letter-spacing:-.5px}
+.rain{font-size:clamp(10px,2.95vw,25px)}
+.bars{height:20px;width:80%;gap:0.5px}.hours{font-size:8px;width:85%}
+}
+
+</style></head><body><header><h1>Wetter Kriens</h1><a class="radar" target="_blank" rel="noopener" href="''' + RADAR + '''">Regenradar</a></header><main class="days">''' + ''.join(cards) + '''</main><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: ''' + escape(updated.strftime('%d.%m.%Y %H:%M')) + '''</footer></body></html>'''
     Path('index.html').write_text(html, encoding='utf-8')
     print('Generated five-day forecast:', item['id'])
 
