@@ -363,7 +363,7 @@ header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
 .rain{font-size:29px;font-weight:700;color:#a8e1f7;margin-top:5px;white-space:nowrap}
 .radar{display:inline-flex;align-items:center;justify-content:center;background:#415b69;color:#f1fbff;border:1px solid #7095a5;padding:6px 10px;border-radius:8px;font-size:12px;text-decoration:none;font-weight:600;white-space:nowrap}
 .radar:focus,.radar:hover{background:#527487}
-footer{display:none}
+/* Keine Fusszeile oder Erklärung unter den Wetterkacheln. */
 /* Auf kleinen DAKboard-Blöcken werden die Grössen begrenzt, damit alle fünf Kacheln lesbar bleiben. */
 @media(max-width:850px){
 body{padding:6px}header h1{font-size:clamp(17px,3vw,24px)}.radar{padding:5px 7px;font-size:11px}.header-left{gap:7px}.current-weather{gap:4px}.current-temp{font-size:clamp(17px,3vw,24px)}.current-icon svg{width:clamp(22px,3.8vw,31px);height:clamp(22px,3.8vw,31px)}.measured-at{font-size:9px}
@@ -377,7 +377,7 @@ body{padding:6px}header h1{font-size:clamp(17px,3vw,24px)}.radar{padding:5px 7px
 .bars{height:20px;width:80%;gap:0.5px}.hours{font-size:8px;width:85%}
 }
 
-</style></head><body><header><div class="header-left"><h1>Wetter Kriens aktuell</h1>''' + current_header + '''</div><a class="radar" target="_blank" rel="noopener" href="''' + RADAR + '''">Regenradar</a></header><main class="days">''' + ''.join(cards) + '''</main><footer>Quelle: MeteoSchweiz Open Data · Aktualisiert: ''' + escape(updated.strftime('%d.%m.%Y %H:%M')) + '''</footer></body></html>'''
+</style></head><body><header><div class="header-left"><h1>Wetter Kriens aktuell</h1>''' + current_header + '''</div><a class="radar" target="_blank" rel="noopener" href="''' + RADAR + '''">Regenradar</a></header><main class="days">''' + ''.join(cards) + '''</main></body></html>'''
     Path('index.html').write_text(html, encoding='utf-8')
     print('Generated five-day forecast:', item['id'])
 
