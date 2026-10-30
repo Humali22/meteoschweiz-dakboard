@@ -228,28 +228,64 @@ def fmt_temp(n):
     return f'{rounded}°'
 
 
-def read_current_measurement():
-    """Latest measured air temperature, Luzern SMN station, UTC timestamp.
+def _observation_from_csv(raw):
+    """Read latest valid Luzern temperature, allowing legacy and OGD CSV formats."""
+    decoded = raw.decode('utf-8-sig', errors='replace')
+    lines = decoded.splitlines()
+    header_idx = next((i for i, line in enumerate(lines)
+                       if re.match(r'\s*(?:stn|station_abbr|station)\s*;', line, re.I)), None)
+    if header_idx is None:
+        raise ValueError('CSV-Spaltenkopf nicht gefunden')
+    rows = csv.DictReader(io.StringIO('\n'.join(lines[header_idx:])), delimiter=';')
+    best = None
+    for original in rows:
+        row = {str(k).strip().lower(): (v or '').strip() for k, v in original.items() if k is not None}
+        station = row.get('stn') or row.get('station_abbr') or row.get('station') or ''
+        if station.upper() != MEASUREMENT_STATION:
+            continue
+        value = convert(row.get('tre200s0'))
+        stamp = row.get('time') or row.get('reference_timestamp') or row.get('date') or ''
+        if value is None:
+            continue
+        try:
+            if re.fullmatch(r'\d{12}', stamp):
+                at = local_datetime(stamp)
+            else:
+                at = datetime.strptime(stamp, '%d.%m.%Y %H:%M').replace(tzinfo=timezone.utc).astimezone(TZ)
+        except (ValueError, TypeError):
+            continue
+        age = (datetime.now(TZ) - at).total_seconds()
+        if not (-900 <= age <= 4 * 3600):
+            continue
+        if best is None or at > best[0]:
+            best = (at, value)
+    return ({'temperature_c': best[1], 'station': 'Luzern',
+             'measured_at': best[0].isoformat()} if best else None)
 
-    Noncritical: if observation service is unavailable, forecast still works.
-    """
+
+def read_current_measurement():
+    """MeteoSchweiz measurement, trying the legacy snapshot and official OGD files."""
     try:
-        raw = fetch(MEASUREMENTS_URL).decode('latin-1')
-        lines = [line for line in raw.splitlines() if ';' in line]
-        rows = csv.DictReader(io.StringIO('\n'.join(lines)), delimiter=';')
-        for row in rows:
-            if (row.get('stn') or '').strip().upper() != MEASUREMENT_STATION:
-                continue
-            value = convert((row.get('tre200s0') or '').strip())
-            stamp = (row.get('time') or '').strip()
-            if value is None or not re.fullmatch(r'\d{12}', stamp):
-                return None
-            at = local_datetime(stamp)
-            if abs((datetime.now(TZ) - at).total_seconds()) > 4 * 3600:
-                return None  # keine überalterte Messung als aktuell ausgeben
-            return {'temperature_c': value, 'station': 'Luzern', 'measured_at': at.isoformat()}
+        result = _observation_from_csv(fetch(MEASUREMENTS_URL))
+        if result:
+            return result
+        print('Keine aktuelle LUZ-Temperatur in der Messwert-Sammeldatei')
     except Exception as err:
-        print('Messwert Luzern vorübergehend nicht verfügbar:', err)
+        print('Alte Messwert-URL fehlgeschlagen:', repr(err))
+    # Documented MeteoSchweiz SwissMetNet OGD dataset, station's 10-minute now file.
+    collection = 'https://data.geo.admin.ch/api/stac/v1/collections/ch.meteoschweiz.ogd-smn'
+    try:
+        response = json.loads(fetch(collection + '/items?limit=100'))
+        for item in sorted(response.get('features', []), key=lambda x: x.get('id', ''), reverse=True):
+            for asset in item.get('assets', {}).values():
+                href = asset.get('href', '')
+                if re.search(r'ogd-smn_luz_t_now\.csv(?:\?|$)', href, re.I):
+                    result = _observation_from_csv(fetch(href))
+                    if result:
+                        return result
+        print('Keine aktuelle LUZ-Messwertdatei im OGD-Katalog gefunden')
+    except Exception as err:
+        print('OGD-Messwert-Abfrage fehlgeschlagen:', repr(err))
     return None
 
 
@@ -343,7 +379,7 @@ header{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .current-temp{font-size:24px;font-weight:800}
 .measured-at{font-size:10px;color:#b7c9d2;white-space:nowrap}
 header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
-.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:10px}
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:28px}
 .day{background:#334b59;border:1px solid #536975;border-radius:11px;padding:9px 5px 8px;text-align:center;min-width:0;display:flex;flex-direction:column;align-items:center}
 .day:nth-child(2){background:#435048;border-color:#607064}
 .day:nth-child(3){background:#554a4b;border-color:#776367}
@@ -367,7 +403,7 @@ header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
 /* Auf kleinen DAKboard-Blöcken werden die Grössen begrenzt, damit alle fünf Kacheln lesbar bleiben. */
 @media(max-width:850px){
 body{padding:6px}header h1{font-size:clamp(17px,3vw,24px)}.radar{padding:5px 7px;font-size:11px}.header-left{gap:7px}.current-weather{gap:4px}.current-temp{font-size:clamp(17px,3vw,24px)}.current-icon svg{width:clamp(22px,3.8vw,31px);height:clamp(22px,3.8vw,31px)}.measured-at{font-size:9px}
-.days{gap:3px;margin-top:8px}.day{padding:7px 1px 6px}
+.days{gap:3px;margin-top:22px}.day{padding:7px 1px 6px}
 .day h2{font-size:clamp(15px,3.2vw,30px)}
 .icon{height:clamp(40px,10vw,77px)}.icon svg{width:clamp(38px,9.5vw,73px);height:clamp(38px,9.5vw,73px)}
 .day strong{font-size:clamp(11px,3.1vw,27px);letter-spacing:-.55px}
