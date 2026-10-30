@@ -1,32 +1,233 @@
 <!doctype html>
-<html lang="de-CH"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Familien-Countdown</title>
-<style>
-:root{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#fff;color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:transparent;padding:5px}.panel{background:#211917;border:1px solid #654236;border-radius:12px;overflow:hidden;max-width:750px;margin:auto}.header{background:linear-gradient(#974122,#6e2e19);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}h1{font-size:17px;margin:0}.edit,.action,.manage button{color:#fff;cursor:pointer;border-radius:7px;border:1px solid #a77b63;padding:8px 10px;background:#79412d;font-size:13px}.entries{padding:5px 10px}.entry{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:8px;padding:8px 4px;border-bottom:1px solid #674539}.entry:last-child{border:0}.emoji{font-size:21px}.days{font-size:18px;font-weight:750;font-variant-numeric:tabular-nums}.muted{color:#e0c7b9;font-size:12px;padding:7px 12px}.modal{padding:12px;background:#35251f;border-top:1px solid #805743}form{display:grid;grid-template-columns:minmax(120px,2fr) minmax(130px,1fr) minmax(140px,1fr) minmax(90px,1fr) auto;gap:8px;align-items:end}label{font-size:12px;color:#ead6cb;display:flex;flex-direction:column;gap:4px}input,select{width:100%;border:1px solid #a77b63;border-radius:6px;background:#fff;color:#222;min-height:38px;padding:7px;font-size:14px}.action{min-height:38px;background:#a84e2e;font-weight:750}.manage{margin-top:10px}.manage-row{display:flex;justify-content:space-between;gap:8px;align-items:center;border-bottom:1px solid #604033;padding:6px 0;font-size:13px}.manage-row button{margin-left:5px;padding:5px 7px}[hidden]{display:none!important}@media(max-width:690px){form{grid-template-columns:1fr 1fr}.wide{grid-column:1/-1}.action{grid-column:1/-1}}
-</style></head><body>
-<section class="panel"><header class="header"><h1>📅 Noch so viele Tage …</h1><button id="toggle" class="edit" type="button">✎ Bearbeiten</button></header>
-<div id="entries" class="entries"></div><div class="muted" id="hint"></div><div class="muted" role="status" id="feedback"></div>
-<section id="editor" class="modal" hidden><form id="form">
-<label class="wide">Ereignis<input id="name" maxlength="60" required placeholder="z. B. Sommerferien"></label>
-<label>Datum<input type="date" id="date" required></label>
-<label>Symbol (19 Möglichkeiten)<select id="emoji">
-<option value="🐰">🐰 Osterhase</option><option value="🎂">🎂 Geburtstagstorte</option><option value="🎹">🎹 Klaviertastatur</option><option value="🎻">🎻 Cello</option><option value="🌷">🌷 Tulpe</option><option value="🏖️">🏖️ Strand</option><option value="✈️">✈️ Flugzeug</option><option value="🎄">🎄 Weihnachten</option><option value="🎅">🎅 Samichlaus</option><option value="🚗">🚗 Auto</option><option value="🧳">🧳 Koffer</option><option value="📚">📚 Bücher</option><option value="✨">✨ Silvester</option><option value="🍂">🍂 Herbstlaub</option><option value="🍁">🍁 Herbstblatt</option><option value="🍂🍁">🍂🍁 Herbstferien</option><option value="⛷️">⛷️ Skiferien</option><option value="🎉" selected>🎉 Feiern</option><option value="custom">✏️ Eigenes Emoji …</option></select></label>
-<label id="customEmojiLabel" hidden>Eigenes Symbol<input id="customEmoji" maxlength="12" placeholder="Emoji"></label>
-<label>Wiederholen<select id="repeat"><option value="once">Einmalig</option><option value="yearly">Jährlich</option></select></label>
-<button class="action" type="submit">Hinzufügen</button></form><div class="manage" id="manage"></div></section></section>
+<html lang="de-CH">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Familien-Countdown</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#fff;color-scheme:dark}
+    *{box-sizing:border-box}
+    body{margin:0;background:transparent;padding:5px}
+    .panel{background:#263740;border:1px solid #536975;border-radius:15px;overflow:hidden;max-width:800px;margin:0 auto}
+    .header{background:#263740;padding:13px 15px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    h1{font-size:22px;margin:0;font-weight:750;letter-spacing:.1px}
+    button{font:inherit;touch-action:manipulation;cursor:pointer}
+    .edit,.action,.small-button{border-radius:9px;color:#fff;border:1px solid #7095a5;padding:8px 11px;background:#415b69;font-size:14px}
+    .edit{white-space:nowrap}
+    .entries{padding:5px 13px 7px}
+    .entry{display:grid;grid-template-columns:45px minmax(0,1fr) auto;align-items:center;gap:12px;padding:13px 5px;border-bottom:1px solid #455b68;min-height:67px}
+    .entry:last-child{border:0}
+    .emoji{font-size:36px}.name{font-size:25px;line-height:1.25;font-weight:600;overflow-wrap:anywhere;color:#fffaf3}.days{font-size:31px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right;color:#a8e1f7}
+    .muted{color:#c0d0d4;font-size:12px;padding:7px 14px}
+    .feedback{color:#a8e1f7;font-size:13px;min-height:0;white-space:normal}
+    .feedback:empty{display:none}
+    .modal{padding:13px;background:#334b59;border-top:1px solid #536975}
+    form{display:grid;grid-template-columns:minmax(120px,2fr) minmax(130px,1fr) minmax(130px,1fr) minmax(95px,1fr) auto;gap:8px;align-items:end}
+    label{font-size:13px;color:#d4e3eb;display:flex;flex-direction:column;gap:5px}
+    input,select{width:100%;border:1px solid #7095a5;border-radius:7px;background:#f5f8fa;color:#263740;min-height:42px;padding:8px;font-size:15px;color-scheme:light}
+    .action{min-height:42px;background:#476f83;font-size:15px;font-weight:750}
+    .action:focus-visible,.edit:focus-visible,.small-button:focus-visible{outline:3px solid #a8e1f7;outline-offset:2px}
+    .manage{margin-top:10px;max-height:220px;overflow:auto}
+    .manage-row{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #536975;padding:8px 0;font-size:14px}
+    .manage-row .buttons{display:flex;gap:5px}
+    .small-button{padding:6px 8px;white-space:nowrap}
+    .version{opacity:.7;font-size:10px;float:right}
+    [hidden]{display:none!important}
+    @media(max-width:690px){form{grid-template-columns:1fr 1fr}.wide{grid-column:1/-1}.action{grid-column:1/-1}.manage-row{flex-wrap:wrap}.name{font-size:22px}.days{font-size:27px}.emoji{font-size:32px}.entry{grid-template-columns:40px minmax(0,1fr) auto;gap:8px}h1{font-size:20px}}
+  </style>
+</head>
+<body>
+<section class="panel" aria-label="Familien-Countdown">
+  <header class="header">
+    <h1>Countdown</h1>
+    <button id="toggle" class="edit" type="button">✎ Bearbeiten</button>
+  </header>
+  <div class="entries" id="entries"></div>
+  <div class="muted" id="hint">Tage bis zum Ereignis</div>
+  <div class="muted feedback" role="status" aria-live="polite" id="feedback"></div>
+  <section id="editor" class="modal" hidden>
+    <form id="form" novalidate>
+      <label class="wide">Ereignis<input id="name" maxlength="60" placeholder="z. B. Sommerferien"></label>
+      <label>Datum<input type="date" id="date" aria-label="Datum auswählen"></label>
+      <label>Symbol<select id="emoji">
+        <option value="🐰">🐰 Osterhase</option>
+        <option value="🎂">🎂 Geburtstagstorte</option>
+        <option value="🎹">🎹 Klaviertastatur</option>
+        <option value="🎻">🎻 Cello / Streichinstrument</option>
+        <option value="🌷">🌷 Tulpe</option>
+        <option value="🏖️">🏖️ Strand</option>
+        <option value="✈️">✈️ Flugzeug</option>
+        <option value="🎄">🎄 Weihnachten</option>
+        <option value="🎅">🎅 Samichlaus</option>
+        <option value="🚗">🚗 Auto</option>
+        <option value="🧳">🧳 Koffer</option>
+        <option value="📚">📚 Bücher</option>
+        <option value="✨">✨ Silvester</option>
+        <option value="🍂">🍂 Herbstlaub</option>
+        <option value="🍁">🍁 Herbstblatt</option>
+        <option value="🍂🍁">🍂🍁 Herbstferien</option>
+        <option value="⛷️">⛷️ Skiferien</option>
+        <option value="🎉" selected>🎉 Feiern</option>
+        <option value="custom">✏️ Eigenes Emoji …</option>
+      </select></label>
+      <label id="customEmojiLabel" hidden>Eigenes Symbol<input id="customEmoji" maxlength="12" placeholder="Emoji"></label>
+      <label>Wiederholen<select id="repeat"><option value="once">Einmalig</option><option value="yearly">Jährlich</option></select></label>
+      <button id="add" class="action" type="button">Hinzufügen</button>
+    </form>
+    <div id="manage" class="manage"></div>
+    <div class="muted">Änderungen werden nur in diesem Browser gespeichert. <span class="version">Version 3.1 · Dunkel</span></div>
+  </section>
+</section>
 <script>
-'use strict';
-const KEY='familien-countdown-v1';
-const defaults=[{id:'xmas',name:'Weihnachten',date:'2026-12-24',emoji:'🎄',repeat:'yearly'},{id:'ny',name:'Silvester',date:'2026-12-31',emoji:'✨',repeat:'yearly'}];
-const $=id=>document.getElementById(id);
-let events;
-try{const stored=JSON.parse(localStorage.getItem(KEY));events=Array.isArray(stored)?stored:defaults.slice()}catch(e){events=defaults.slice()}
-function today(){const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())}
-function days(e){const parts=String(e.date||'').split('-').map(Number);if(parts.length!==3||parts.some(n=>!Number.isFinite(n)))return null;const now=today();let d=new Date(parts[0],parts[1]-1,parts[2]);if(e.repeat==='yearly'){d=new Date(now.getFullYear(),parts[1]-1,parts[2]);if(d<now)d=new Date(now.getFullYear()+1,parts[1]-1,parts[2])}return Math.round((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()))/86400000)}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(events));return true}catch(e){$('feedback').textContent='Speichern im Browser blockiert. Die Änderung ist nur bis zum Neuladen sichtbar.';return false}}
-function render(){const upcoming=events.map(e=>({...e,left:days(e)})).filter(e=>e.left!==null&&e.left>=0).sort((a,b)=>a.left-b.left);$('entries').replaceChildren();if(!upcoming.length){const x=document.createElement('div');x.className='muted';x.textContent='Keine kommenden Ereignisse. Tippe auf Bearbeiten.';$('entries').append(x)}for(const e of upcoming){const row=document.createElement('div');row.className='entry';for(const [cls,txt] of [['emoji',e.emoji||'🎉'],['name',e.name],['days',String(e.left)]]){const x=document.createElement('span');x.className=cls;x.textContent=txt;row.append(x)}$('entries').append(row)}$('hint').textContent='';$('manage').replaceChildren();for(const e of events){const row=document.createElement('div');row.className='manage-row';const label=document.createElement('span');label.textContent=`${e.emoji||'🎉'} ${e.name} · ${e.date}${e.repeat==='yearly'?' · jährlich':''}`;const buttons=document.createElement('span');const edit=document.createElement('button');edit.type='button';edit.textContent='Ändern';edit.onclick=()=>{$('name').value=e.name;$('date').value=e.date;$('repeat').value=e.repeat;const known=[...$('emoji').options].some(o=>o.value===e.emoji);$('emoji').value=known?e.emoji:'custom';$('customEmoji').value=known?'':e.emoji;syncEmoji();events=events.filter(x=>x.id!==e.id);save();render();$('name').focus()};const del=document.createElement('button');del.type='button';del.textContent='Löschen';del.onclick=()=>{events=events.filter(x=>x.id!==e.id);save();render()};buttons.append(edit,del);row.append(label,buttons);$('manage').append(row)}}
-function syncEmoji(){$('customEmojiLabel').hidden=$('emoji').value!=='custom'}
-$('emoji').addEventListener('change',syncEmoji);
-$('toggle').addEventListener('click',()=>{const open=$('editor').hidden;$('editor').hidden=!open;$('toggle').textContent=open?'Fertig':'✎ Bearbeiten'});
-$('form').addEventListener('submit',e=>{e.preventDefault();const name=$('name').value.trim(),date=$('date').value;if(!name||!date){$('feedback').textContent='Bitte Ereignis und Datum ausfüllen.';return}const emoji=($('emoji').value==='custom'?$('customEmoji').value.trim():$('emoji').value)||'🎉';events.push({id:String(Date.now())+Math.random(),name,date,emoji,repeat:$('repeat').value});const saved=save();$('form').reset();syncEmoji();render();if(saved)$('feedback').textContent='✓ Ereignis hinzugefügt und gespeichert.'});
-syncEmoji();render();document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
-</script></body></html>
+(function(){
+  'use strict';
+  // This key preserves events entered in previous versions of the Countdown.
+  const KEY='familien-countdown-v1';
+  const DEFAULTS=[
+    {id:'xmas',name:'Weihnachten',date:'2026-12-24',emoji:'🎄',repeat:'yearly'},
+    {id:'ny',name:'Silvester',date:'2026-12-31',emoji:'✨',repeat:'yearly'}
+  ];
+  const el=id=>document.getElementById(id);
+  let events=[];
+  let editingId=null;
+  let storageAvailable=true;
+  try {
+    const stored=JSON.parse(localStorage.getItem(KEY));
+    events=Array.isArray(stored) ? stored : DEFAULTS.slice();
+  } catch(err) {
+    storageAvailable=false;
+    events=DEFAULTS.slice();
+  }
+  function message(text){el('feedback').textContent=text}
+  function validDate(date){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;
+    const [y,m,d]=date.split('-').map(Number);
+    const dt=new Date(y,m-1,d);
+    return dt.getFullYear()===y && dt.getMonth()===m-1 && dt.getDate()===d;
+  }
+  function dayNumber(y,m,d){return Date.UTC(y,m-1,d)/86400000}
+  function daysLeft(event){
+    if(!validDate(String(event.date||'')))return null;
+    const [y,m,d]=event.date.split('-').map(Number);
+    const today=new Date();
+    const todayN=dayNumber(today.getFullYear(),today.getMonth()+1,today.getDate());
+    if(event.repeat==='yearly'){
+      let year=today.getFullYear();
+      let target=dayNumber(year,m,d);
+      if(target<todayN){year+=1;target=dayNumber(year,m,d)}
+      return Math.round(target-todayN);
+    }
+    return Math.round(dayNumber(y,m,d)-todayN);
+  }
+  function save(){
+    try {
+      localStorage.setItem(KEY,JSON.stringify(events));
+      storageAvailable=true;
+      return true;
+    } catch(err) {
+      storageAvailable=false;
+      return false;
+    }
+  }
+  function syncEmoji(){el('customEmojiLabel').hidden=el('emoji').value!=='custom'}
+  function resetForm(){
+    editingId=null;
+    el('form').reset();
+    el('emoji').value='🎉';
+    el('customEmoji').value='';
+    el('add').textContent='Hinzufügen';
+    syncEmoji();
+  }
+  function render(){
+    const entries=el('entries');
+    const management=el('manage');
+    entries.replaceChildren();
+    management.replaceChildren();
+    const upcoming=events.map(event=>({event,left:daysLeft(event)}))
+      .filter(item=>item.left!==null&&item.left>=0)
+      .sort((a,b)=>a.left-b.left);
+    if(!upcoming.length){
+      const empty=document.createElement('div');
+      empty.className='muted';
+      empty.textContent='Keine kommenden Ereignisse. Tippe auf Bearbeiten.';
+      entries.appendChild(empty);
+    }
+    for(const {event,left} of upcoming){
+      const row=document.createElement('div');
+      row.className='entry';
+      for(const [className,value] of [
+        ['emoji',event.emoji||'🎉'],['name',event.name||'Ereignis'],['days',String(left)]
+      ]){
+        const span=document.createElement('span');
+        span.className=className;
+        span.textContent=value;
+        row.appendChild(span);
+      }
+      entries.appendChild(row);
+    }
+    el('hint').textContent='Tage bis zum Ereignis · jährlich wiederkehrende Termine zählen automatisch neu';
+    for(const event of events){
+      const row=document.createElement('div');row.className='manage-row';
+      const label=document.createElement('span');
+      label.textContent=(event.emoji||'🎉')+' '+(event.name||'Ereignis')+' · '+event.date+(event.repeat==='yearly'?' · jährlich':'');
+      const buttons=document.createElement('div');buttons.className='buttons';
+      const edit=document.createElement('button');edit.type='button';edit.className='small-button';edit.textContent='Ändern';
+      edit.addEventListener('click',()=>{
+        editingId=event.id;
+        el('name').value=event.name||'';
+        el('date').value=validDate(String(event.date||''))?event.date:'';
+        el('repeat').value=event.repeat==='yearly'?'yearly':'once';
+        const exists=[...el('emoji').options].some(option=>option.value===event.emoji);
+        el('emoji').value=exists?event.emoji:'custom';
+        el('customEmoji').value=exists?'':(event.emoji||'');
+        syncEmoji();
+        el('add').textContent='Änderung speichern';
+        message('Ereignis bearbeiten, dann auf «Änderung speichern» tippen.');
+        el('name').focus();
+      });
+      const del=document.createElement('button');del.type='button';del.className='small-button';del.textContent='Löschen';
+      del.addEventListener('click',()=>{
+        events=events.filter(item=>item.id!==event.id);
+        if(editingId===event.id)resetForm();
+        const saved=save();render();
+        message(saved?'Ereignis gelöscht.':'Ereignis gelöscht, aber dauerhafte Speicherung ist hier blockiert.');
+      });
+      buttons.append(edit,del);row.append(label,buttons);management.appendChild(row);
+    }
+  }
+  function addEvent(){
+    // Explicit button handler: browser's native form validation cannot swallow the click.
+    try{
+      const name=el('name').value.trim();
+      const date=el('date').value.trim();
+      if(!name){message('Bitte zuerst einen Namen für das Ereignis eingeben.');el('name').focus();return}
+      if(!validDate(date)){message('Bitte ein gültiges Datum auswählen (Tag, Monat und Jahr).');el('date').focus();return}
+      const custom=el('emoji').value==='custom';
+      const emoji=(custom?el('customEmoji').value.trim():el('emoji').value)||'🎉';
+      const item={id:editingId||('event-'+Date.now()+'-'+Math.floor(Math.random()*100000)),name,date,emoji,
+        repeat:el('repeat').value==='yearly'?'yearly':'once'};
+      if(editingId){events=events.map(event=>event.id===editingId?item:event)}
+      else events.push(item);
+      const saved=save();
+      render();
+      resetForm();
+      message(saved?'✓ Ereignis hinzugefügt und gespeichert.':'✓ Ereignis hinzugefügt. Hinweis: dauerhafte Speicherung ist in diesem Browser blockiert.');
+    }catch(err){message('Fehler beim Hinzufügen: '+(err&&err.message?err.message:String(err)))}
+  }
+  el('toggle').addEventListener('click',()=>{
+    const opening=el('editor').hidden;
+    el('editor').hidden=!opening;
+    el('toggle').textContent=opening?'Fertig':'✎ Bearbeiten';
+    if(opening&&!storageAvailable)message('Hinweis: Dieser Browser verhindert dauerhafte lokale Speicherung.');
+  });
+  el('emoji').addEventListener('change',syncEmoji);
+  el('form').addEventListener('submit',event=>{event.preventDefault();addEvent()});
+  el('add').addEventListener('click',addEvent);
+  syncEmoji();
+  render();
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+})();
+</script>
+</body>
+</html>
