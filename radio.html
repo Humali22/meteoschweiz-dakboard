@@ -3,31 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="dark">
 <title>Familienradio</title>
 <style>
-:root{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#16314b;background:transparent}
+:root{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#f7f3eb;background:#263740;color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;padding:10px}
-.panel{background:#f3f7fc;border:1px solid #dce7f3;border-radius:18px;padding:12px 14px;max-width:1100px;margin:auto}
-header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-h1{font-size:20px;margin:0;font-weight:750}
-small{font-size:12px;color:#5d7289}
-.controls{display:flex;align-items:stretch;gap:9px;flex-wrap:wrap}
-.station,.stop{min-height:52px;border:1px solid #d0ddeb;border-radius:13px;background:white;color:#19324b;font-size:16px;font-weight:700;padding:10px 14px;cursor:pointer;flex:1;min-width:122px;touch-action:manipulation}
+body{margin:0;padding:8px;background:#263740}
+.panel{background:#263740;border:0;border-radius:14px;padding:9px 10px;max-width:1100px;margin:auto}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+h1{font-size:25px;margin:0;font-weight:800;color:#fff9f0;letter-spacing:.1px}
+small{font-size:12px;color:#c0d0d4}
+.controls{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
+.station,.stop{min-height:60px;border:1px solid #667985;border-radius:12px;background:#334b59;color:#fffaf3;font-size:19px;font-weight:750;padding:10px 14px;cursor:pointer;flex:1;min-width:125px;touch-action:manipulation}
+.station:nth-child(2){background:#435048;border-color:#607064}
+.station:nth-child(3){background:#554a4b;border-color:#776367}
 .station:active,.stop:active{transform:scale(.99)}
-.station[aria-pressed="true"]{background:#1d6eb0;border-color:#1d6eb0;color:white}
-.stop{flex:0 0 auto;min-width:100px;background:#e8edf2}
-footer{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
-.status{font-size:13px;color:#465f79;flex:1;min-width:200px}
-.volume{display:flex;gap:7px;align-items:center;font-size:13px;color:#465f79}
-input[type=range]{accent-color:#1d6eb0;min-width:90px;width:115px}
-@media(max-width:540px){body{padding:4px}.panel{padding:8px;border-radius:12px}h1{font-size:16px}.station,.stop{font-size:14px;min-height:45px;padding:8px;min-width:94px}.stop{min-width:80px}.controls{gap:6px}.volume{display:none}}
+.station[aria-pressed="true"]{background:#51788c;border-color:#a8e1f7;color:#fff;box-shadow:inset 0 0 0 2px #7ecae8}
+.stop{flex:0 0 auto;min-width:105px;background:#415b69;border-color:#7095a5}
+.stop:focus-visible,.station:focus-visible{outline:3px solid #a8e1f7;outline-offset:2px}
+footer{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.status{font-size:14px;color:#a8e1f7;flex:1;min-width:180px}
+.volume{display:flex;gap:7px;align-items:center;font-size:14px;color:#e1e8e4}
+input[type=range]{accent-color:#7ecae8;min-width:90px;width:125px}
+@media(max-width:540px){body{padding:4px}.panel{padding:5px;border-radius:10px}h1{font-size:21px}.station,.stop{font-size:15px;min-height:51px;padding:7px;min-width:93px}.stop{min-width:73px}.controls{gap:5px}.volume{display:none}small{display:none}.status{font-size:12px;min-width:0}}
 </style>
 </head>
 <body>
 <section class="panel" aria-label="Familienradio">
-<header><h1>📻 Familienradio</h1><small>Tippen zum Abspielen</small></header>
+<header><h1>Radio</h1><small>Sender auswählen</small></header>
 <div class="controls" role="group" aria-label="Radiosender">
 <button class="station" type="button" data-station="srf1" aria-pressed="false">▶ SRF 1</button>
 <button class="station" type="button" data-station="srf3" aria-pressed="false">▶ SRF 3</button>
