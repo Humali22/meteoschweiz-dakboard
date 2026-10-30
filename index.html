@@ -11,7 +11,7 @@ header{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .current-temp{font-size:24px;font-weight:800}
 .measured-at{font-size:10px;color:#b7c9d2;white-space:nowrap}
 header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
-.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:10px}
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:28px}
 .day{background:#334b59;border:1px solid #536975;border-radius:11px;padding:9px 5px 8px;text-align:center;min-width:0;display:flex;flex-direction:column;align-items:center}
 .day:nth-child(2){background:#435048;border-color:#607064}
 .day:nth-child(3){background:#554a4b;border-color:#776367}
@@ -35,7 +35,7 @@ header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
 /* Auf kleinen DAKboard-Blöcken werden die Grössen begrenzt, damit alle fünf Kacheln lesbar bleiben. */
 @media(max-width:850px){
 body{padding:6px}header h1{font-size:clamp(17px,3vw,24px)}.radar{padding:5px 7px;font-size:11px}.header-left{gap:7px}.current-weather{gap:4px}.current-temp{font-size:clamp(17px,3vw,24px)}.current-icon svg{width:clamp(22px,3.8vw,31px);height:clamp(22px,3.8vw,31px)}.measured-at{font-size:9px}
-.days{gap:3px;margin-top:8px}.day{padding:7px 1px 6px}
+.days{gap:3px;margin-top:22px}.day{padding:7px 1px 6px}
 .day h2{font-size:clamp(15px,3.2vw,30px)}
 .icon{height:clamp(40px,10vw,77px)}.icon svg{width:clamp(38px,9.5vw,73px);height:clamp(38px,9.5vw,73px)}
 .day strong{font-size:clamp(11px,3.1vw,27px);letter-spacing:-.55px}
@@ -45,7 +45,7 @@ body{padding:6px}header h1{font-size:clamp(17px,3vw,24px)}.radar{padding:5px 7px
 .bars{height:20px;width:80%;gap:0.5px}.hours{font-size:8px;width:85%}
 }
 
-</style></head><body><header><div class="header-left"><h1>Wetter Kriens aktuell</h1><span class="measured-at">Messwert derzeit nicht verfügbar</span></div><a class="radar" target="_blank" rel="noopener" href="https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/niederschlag.html">Regenradar</a></header><main class="days"><section class="day"><h2>Heute</h2><div class="icon"><svg viewBox="0 0 24 26" aria-label="Bedeckt" role="img" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.2 17.5C4.4 17.5 2.8 15.7 2.8 13.1c0-2.8 2-4.7 4.7-4.8C8.3 4.3 11.4 2.7 14.2 3.2c3.2.5 5 2.9 5.1 5.9 2.9.1 4.2 2 4.2 4.3 0 2.5-1.7 4.1-4.2 4.1"/><path d="M7.2 17.5h12.1"/></svg></div>
+</style></head><body><header><div class="header-left"><h1>Wetter Kriens aktuell</h1><span class="current-weather" title="Temperatur-Messstation Luzern, 16:10 Uhr; Symbol: heutige Prognose für Kriens"><span class="current-icon"><svg viewBox="0 0 24 26" aria-label="Bedeckt" role="img" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.2 17.5C4.4 17.5 2.8 15.7 2.8 13.1c0-2.8 2-4.7 4.7-4.8C8.3 4.3 11.4 2.7 14.2 3.2c3.2.5 5 2.9 5.1 5.9 2.9.1 4.2 2 4.2 4.3 0 2.5-1.7 4.1-4.2 4.1"/><path d="M7.2 17.5h12.1"/></svg></span><span class="current-temp">10°</span><span class="measured-at">Luzern · 16:10</span></span></div><a class="radar" target="_blank" rel="noopener" href="https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/niederschlag.html">Regenradar</a></header><main class="days"><section class="day"><h2>Heute</h2><div class="icon"><svg viewBox="0 0 24 26" aria-label="Bedeckt" role="img" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7.2 17.5C4.4 17.5 2.8 15.7 2.8 13.1c0-2.8 2-4.7 4.7-4.8C8.3 4.3 11.4 2.7 14.2 3.2c3.2.5 5 2.9 5.1 5.9 2.9.1 4.2 2 4.2 4.3 0 2.5-1.7 4.1-4.2 4.1"/><path d="M7.2 17.5h12.1"/></svg></div>
             <strong>6° / 9°</strong>
             <div class="wind" title="Stärkster stündlicher Mittelwind: 5 km/h; Herkunftsrichtung: W"><span class="arrow">←</span> 5 km/h</div>
             <div class="probability">Max. 4%</div>
