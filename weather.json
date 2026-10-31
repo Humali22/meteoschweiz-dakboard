@@ -2,11 +2,11 @@
   "location": "Kriens",
   "source": "MeteoSchweiz Open Data",
   "forecast_item": "20261031-ch",
-  "updated": "2026-10-31T16:41:44.416075+01:00",
+  "updated": "2026-10-31T19:50:27.833456+01:00",
   "current_measurement": {
-    "temperature_c": 9.0,
+    "temperature_c": 7.0,
     "station": "Luzern",
-    "measured_at": "2026-10-31T16:10:00+01:00"
+    "measured_at": "2026-10-31T19:40:00+01:00"
   },
   "days": [
     {
