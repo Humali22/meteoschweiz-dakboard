@@ -180,7 +180,7 @@ def weather_symbol(code):
     cloud_open = '<path d="M7.2 17.5C4.4 17.5 2.8 15.7 2.8 13.1c0-2.8 2-4.7 4.7-4.8C8.3 4.3 11.4 2.7 14.2 3.2c3.2.5 5 2.9 5.1 5.9 2.9.1 4.2 2 4.2 4.3 0 2.5-1.7 4.1-4.2 4.1"/>'
     cloud = cloud_open + '<path d="M7.2 17.5h12.1"/>'
     # Bewölkt: zwei überlappende Wolken, kleine versetzt rechts unten.
-    second_cloud = '<path d="M15.9 18.7c.8-1.1 2-1.7 3.4-1.7 2.1 0 3.6 1.3 3.8 3.1 1.7.1 2.8 1.4 2.8 3 0 1.7-1.3 2.8-3.1 2.8h-8.2" transform="translate(-2 -1) scale(.94)"/>'
+    second_cloud = '<path d="M12.2 20.4h7.4c2.1 0 3.6-1.4 3.6-3.4 0-1.9-1.3-3.2-3.1-3.4-.6-2.2-2.2-3.4-4.2-3.4-2.2 0-3.8 1.6-4.1 3.9-1.5.2-2.5 1.3-2.5 2.9 0 1.9 1.2 3.4 2.9 3.4Z"/>'
     rain = '<path d="M7.7 19.3v3.3M13.2 19.3v3.3M18.7 19.3v3.3"/>'
     rain_two = '<path d="M8 19.3v3.3M19 19.3v3.3"/>'
     # Dreifach-Schneeflocke (kleine gekreuzte Striche statt Punkte).
@@ -201,7 +201,7 @@ def weather_symbol(code):
     elif kind == 'cloud':
         shapes = cloud + second_cloud
     elif kind == 'overcast':
-        shapes = cloud
+        shapes = cloud + second_cloud
     elif kind == 'fog':
         shapes = cloud_open + fog
     elif kind == 'rain':
@@ -228,64 +228,28 @@ def fmt_temp(n):
     return f'{rounded}°'
 
 
-def _observation_from_csv(raw):
-    """Read latest valid Luzern temperature, allowing legacy and OGD CSV formats."""
-    decoded = raw.decode('utf-8-sig', errors='replace')
-    lines = decoded.splitlines()
-    header_idx = next((i for i, line in enumerate(lines)
-                       if re.match(r'\s*(?:stn|station_abbr|station)\s*;', line, re.I)), None)
-    if header_idx is None:
-        raise ValueError('CSV-Spaltenkopf nicht gefunden')
-    rows = csv.DictReader(io.StringIO('\n'.join(lines[header_idx:])), delimiter=';')
-    best = None
-    for original in rows:
-        row = {str(k).strip().lower(): (v or '').strip() for k, v in original.items() if k is not None}
-        station = row.get('stn') or row.get('station_abbr') or row.get('station') or ''
-        if station.upper() != MEASUREMENT_STATION:
-            continue
-        value = convert(row.get('tre200s0'))
-        stamp = row.get('time') or row.get('reference_timestamp') or row.get('date') or ''
-        if value is None:
-            continue
-        try:
-            if re.fullmatch(r'\d{12}', stamp):
-                at = local_datetime(stamp)
-            else:
-                at = datetime.strptime(stamp, '%d.%m.%Y %H:%M').replace(tzinfo=timezone.utc).astimezone(TZ)
-        except (ValueError, TypeError):
-            continue
-        age = (datetime.now(TZ) - at).total_seconds()
-        if not (-900 <= age <= 4 * 3600):
-            continue
-        if best is None or at > best[0]:
-            best = (at, value)
-    return ({'temperature_c': best[1], 'station': 'Luzern',
-             'measured_at': best[0].isoformat()} if best else None)
-
-
 def read_current_measurement():
-    """MeteoSchweiz measurement, trying the legacy snapshot and official OGD files."""
+    """Latest measured air temperature, Luzern SMN station, UTC timestamp.
+
+    Noncritical: if observation service is unavailable, forecast still works.
+    """
     try:
-        result = _observation_from_csv(fetch(MEASUREMENTS_URL))
-        if result:
-            return result
-        print('Keine aktuelle LUZ-Temperatur in der Messwert-Sammeldatei')
+        raw = fetch(MEASUREMENTS_URL).decode('latin-1')
+        lines = [line for line in raw.splitlines() if ';' in line]
+        rows = csv.DictReader(io.StringIO('\n'.join(lines)), delimiter=';')
+        for row in rows:
+            if (row.get('stn') or '').strip().upper() != MEASUREMENT_STATION:
+                continue
+            value = convert((row.get('tre200s0') or '').strip())
+            stamp = (row.get('time') or '').strip()
+            if value is None or not re.fullmatch(r'\d{12}', stamp):
+                return None
+            at = local_datetime(stamp)
+            if abs((datetime.now(TZ) - at).total_seconds()) > 4 * 3600:
+                return None  # keine überalterte Messung als aktuell ausgeben
+            return {'temperature_c': value, 'station': 'Luzern', 'measured_at': at.isoformat()}
     except Exception as err:
-        print('Alte Messwert-URL fehlgeschlagen:', repr(err))
-    # Documented MeteoSchweiz SwissMetNet OGD dataset, station's 10-minute now file.
-    collection = 'https://data.geo.admin.ch/api/stac/v1/collections/ch.meteoschweiz.ogd-smn'
-    try:
-        response = json.loads(fetch(collection + '/items?limit=100'))
-        for item in sorted(response.get('features', []), key=lambda x: x.get('id', ''), reverse=True):
-            for asset in item.get('assets', {}).values():
-                href = asset.get('href', '')
-                if re.search(r'ogd-smn_luz_t_now\.csv(?:\?|$)', href, re.I):
-                    result = _observation_from_csv(fetch(href))
-                    if result:
-                        return result
-        print('Keine aktuelle LUZ-Messwertdatei im OGD-Katalog gefunden')
-    except Exception as err:
-        print('OGD-Messwert-Abfrage fehlgeschlagen:', repr(err))
+        print('Messwert Luzern vorübergehend nicht verfügbar:', err)
     return None
 
 
@@ -379,8 +343,8 @@ header{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .current-temp{font-size:24px;font-weight:800}
 .measured-at{font-size:10px;color:#b7c9d2;white-space:nowrap}
 header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
-.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:28px}
-.day{background:#334b59;border:1px solid #536975;border-radius:11px;padding:9px 5px 8px;text-align:center;min-width:0;display:flex;flex-direction:column;align-items:center}
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:10px;align-items:start}
+.day{background:#334b59;border:1px solid #536975;border-radius:11px;padding:9px 5px 1px;text-align:center;min-width:0;display:flex;flex-direction:column;align-items:center}
 .day:nth-child(2){background:#435048;border-color:#607064}
 .day:nth-child(3){background:#554a4b;border-color:#776367}
 .day:nth-child(4){background:#374c59;border-color:#567080}
@@ -389,27 +353,27 @@ header h1{font-size:24px;margin:0;font-weight:800;color:#fff;white-space:nowrap}
 .icon{height:95px;display:flex;align-items:center;justify-content:center;color:#fff;margin:3px auto 1px}
 .icon svg{width:88px;height:88px;display:block;color:#fff}
 .day strong{font-size:32px;white-space:nowrap;color:#fff;font-weight:750}
-.wind{font-size:29px;color:#fff;white-space:nowrap;margin-top:4px;line-height:1.2;min-height:20px}
-.wind .arrow{font-size:33px;line-height:1;vertical-align:-1px;font-weight:700}
-.probability{font-size:32px;font-weight:700;color:#a8e1f7;margin-top:5px;white-space:nowrap}
+.wind{font-size:23px;color:#fff;white-space:nowrap;margin-top:4px;line-height:1.2;min-height:20px}
+.wind .arrow{font-size:26px;line-height:1;vertical-align:-1px;font-weight:700}
+.probability{font-size:26px;font-weight:700;color:#a8e1f7;margin-top:5px;white-space:nowrap}
 .bars{height:20px;width:70%;display:flex;align-items:flex-end;gap:0.5px;border-bottom:1px solid #899fa7;margin:5px auto 0}
 .bar{display:block;background:#7ecae8;flex:1;border-radius:2px 2px 0 0;min-width:0}
 .bar.missing{background:#61727a;height:2px}
 .hours{width:72%;display:flex;justify-content:space-between;font-size:9px;color:#d0dbdd;padding:2px 2px 0}
-.rain{font-size:29px;font-weight:700;color:#a8e1f7;margin-top:5px;white-space:nowrap}
+.rain{font-size:23px;font-weight:700;color:#a8e1f7;margin-top:5px;white-space:nowrap}
 .radar{display:inline-flex;align-items:center;justify-content:center;background:#415b69;color:#f1fbff;border:1px solid #7095a5;padding:6px 10px;border-radius:8px;font-size:12px;text-decoration:none;font-weight:600;white-space:nowrap}
 .radar:focus,.radar:hover{background:#527487}
 /* Keine Fusszeile oder Erklärung unter den Wetterkacheln. */
 /* Auf kleinen DAKboard-Blöcken werden die Grössen begrenzt, damit alle fünf Kacheln lesbar bleiben. */
 @media(max-width:850px){
 body{padding:6px}header h1{font-size:clamp(17px,3vw,24px)}.radar{padding:5px 7px;font-size:11px}.header-left{gap:7px}.current-weather{gap:4px}.current-temp{font-size:clamp(17px,3vw,24px)}.current-icon svg{width:clamp(22px,3.8vw,31px);height:clamp(22px,3.8vw,31px)}.measured-at{font-size:9px}
-.days{gap:3px;margin-top:22px}.day{padding:7px 1px 6px}
+.days{gap:3px;margin-top:8px}.day{padding:7px 1px 1px}
 .day h2{font-size:clamp(15px,3.2vw,30px)}
 .icon{height:clamp(40px,10vw,77px)}.icon svg{width:clamp(38px,9.5vw,73px);height:clamp(38px,9.5vw,73px)}
 .day strong{font-size:clamp(11px,3.1vw,27px);letter-spacing:-.55px}
-.wind{font-size:clamp(10px,2.9vw,25px);min-height:0}.wind .arrow{font-size:1.1em}
-.probability{font-size:clamp(11px,3.1vw,27px);letter-spacing:-.5px}
-.rain{font-size:clamp(10px,2.95vw,25px)}
+.wind{font-size:clamp(8px,2.32vw,20px);min-height:0}.wind .arrow{font-size:1.1em}
+.probability{font-size:clamp(9px,2.48vw,22px);letter-spacing:-.5px}
+.rain{font-size:clamp(8px,2.36vw,20px)}
 .bars{height:20px;width:80%;gap:0.5px}.hours{font-size:8px;width:85%}
 }
 
