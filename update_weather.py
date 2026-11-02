@@ -229,27 +229,55 @@ def fmt_temp(n):
 
 
 def read_current_measurement():
-    """Latest measured air temperature, Luzern SMN station, UTC timestamp.
+    """Most recent valid 10-minute air-temperature observation for Luzern.
 
-    Noncritical: if observation service is unavailable, forecast still works.
+    MeteoSchweiz SwissMetNet Open Data: per-station t_now CSV.
+    Time stamps in the official file are UTC in dd.mm.yyyy HH:MM format.
     """
-    try:
-        raw = fetch(MEASUREMENTS_URL).decode('latin-1')
-        lines = [line for line in raw.splitlines() if ';' in line]
-        rows = csv.DictReader(io.StringIO('\n'.join(lines)), delimiter=';')
-        for row in rows:
-            if (row.get('stn') or '').strip().upper() != MEASUREMENT_STATION:
+    station = MEASUREMENT_STATION.lower()
+    urls = [
+        f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn/{station}/ogd-smn_{station}_t_now.csv',
+        MEASUREMENTS_URL,  # Older feed only as a fallback
+    ]
+    for url in urls:
+        try:
+            raw = fetch(url).decode('utf-8-sig', errors='replace')
+            reader = csv.DictReader(io.StringIO(raw), delimiter=';')
+            headers = {name.strip().lower(): name for name in (reader.fieldnames or []) if name}
+            station_field = headers.get('station_abbr') or headers.get('stn')
+            time_field = headers.get('reference_timestamp') or headers.get('time')
+            temp_field = headers.get('tre200s0')
+            if not station_field or not time_field or not temp_field:
+                print('Messwert: unbekannte Spalten in', url, list(headers))
                 continue
-            value = convert((row.get('tre200s0') or '').strip())
-            stamp = (row.get('time') or '').strip()
-            if value is None or not re.fullmatch(r'\d{12}', stamp):
-                return None
-            at = local_datetime(stamp)
-            if abs((datetime.now(TZ) - at).total_seconds()) > 4 * 3600:
-                return None  # keine überalterte Messung als aktuell ausgeben
-            return {'temperature_c': value, 'station': 'Luzern', 'measured_at': at.isoformat()}
-    except Exception as err:
-        print('Messwert Luzern vorübergehend nicht verfügbar:', err)
+            best = None
+            for row in reader:
+                if (row.get(station_field) or '').strip().upper() != MEASUREMENT_STATION:
+                    continue
+                value = convert((row.get(temp_field) or '').strip())
+                stamp = (row.get(time_field) or '').strip()
+                if value is None:
+                    continue
+                try:
+                    if re.fullmatch(r'\d{12}', stamp):
+                        at = local_datetime(stamp)
+                    else:
+                        at = datetime.strptime(stamp, '%d.%m.%Y %H:%M').replace(tzinfo=timezone.utc).astimezone(TZ)
+                except ValueError:
+                    continue
+                if best is None or at > best[0]:
+                    best = (at, value)
+            if best:
+                at, value = best
+                minutes_old = (datetime.now(TZ) - at).total_seconds() / 60
+                if -15 <= minutes_old <= 240:
+                    print(f'Aktueller Messwert Luzern: {value} °C, {at.isoformat()}, vor {minutes_old:.0f} min')
+                    return {'temperature_c': value, 'station': 'Luzern', 'measured_at': at.isoformat()}
+                print(f'Messwert aus {url} ist zu alt oder liegt in Zukunft: {at.isoformat()}')
+            else:
+                print('Kein gültiger Messwert für Luzern in', url)
+        except Exception as err:
+            print('Messwert-Abfrage fehlgeschlagen:', url, repr(err))
     return None
 
 
