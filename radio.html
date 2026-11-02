@@ -13,11 +13,13 @@ body{margin:0;padding:8px;background:#263740}
 header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
 h1{font-size:25px;margin:0;font-weight:800;color:#fff9f0;letter-spacing:.1px}
 small{font-size:12px;color:#c0d0d4}
-.controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
 .station,.stop{min-height:60px;border:1px solid #667985;border-radius:12px;background:#334b59;color:#fffaf3;font-size:19px;font-weight:750;padding:10px 14px;cursor:pointer;min-width:0;touch-action:manipulation}
 .station:nth-child(2){background:#435048;border-color:#607064}
 .station:nth-child(3){background:#554a4b;border-color:#776367}
 .station:nth-child(4){background:#76464b;border-color:#96616a}
+.station:nth-child(5){background:#415a69;border-color:#678394}
+.station:nth-child(5){font-size:clamp(12px,1.6vw,18px)}
 .station:active,.stop:active{transform:scale(.99)}
 .station[aria-pressed="true"]{background:#51788c;border-color:#a8e1f7;color:#fff;box-shadow:inset 0 0 0 2px #7ecae8}
 .stop{min-height:44px;width:52px;min-width:52px;font-size:22px;background:#415b69;border-color:#7095a5;display:flex;align-items:center;justify-content:center;padding:6px}
@@ -27,7 +29,7 @@ small{font-size:12px;color:#c0d0d4}
 .status{font-size:14px;color:#a8e1f7;flex:1;min-width:180px}
 .volume{display:flex;flex:1;gap:11px;align-items:center;font-size:19px;color:#e1e8e4;min-width:0}
 input[type=range]{accent-color:#7ecae8;width:100%;max-width:370px;min-width:65px;min-height:30px;cursor:pointer}
-@media(max-width:540px){body{padding:4px}.panel{padding:5px;border-radius:10px}h1{font-size:21px}.station{font-size:13px;min-height:57px;padding:6px 3px;line-height:1.2;overflow-wrap:anywhere}.controls{gap:4px}.audio-row{gap:8px;margin-top:6px}.volume{display:flex;font-size:18px;gap:7px}.stop{font-size:20px;width:45px;min-width:45px;min-height:40px;padding:5px}small{display:none}}
+@media(max-width:540px){body{padding:4px}.panel{padding:5px;border-radius:10px}h1{font-size:21px}.station{font-size:12px;min-height:57px;padding:6px 3px;line-height:1.2;overflow-wrap:anywhere}.controls{gap:4px}.audio-row{gap:8px;margin-top:6px}.volume{display:flex;font-size:18px;gap:7px}.stop{font-size:20px;width:45px;min-width:45px;min-height:40px;padding:5px}small{display:none}}
 </style>
 </head>
 <body>
@@ -38,6 +40,7 @@ input[type=range]{accent-color:#7ecae8;width:100%;max-width:370px;min-width:65px
 <button class="station" type="button" data-station="srf3" aria-pressed="false">▶ SRF 3</button>
 <button class="station" type="button" data-station="pilatus" aria-pressed="false">▶ Pilatus</button>
 <button class="station" type="button" data-station="xmas" aria-pressed="false">▶ X-Mas</button>
+<button class="station" type="button" data-station="musikwelle" aria-pressed="false">▶ Musikwelle</button>
 </div>
 <div class="audio-row"><label class="volume">🔊 <input id="volume" type="range" min="0" max="100" value="70" aria-label="Lautstärke"></label><button class="stop" type="button" id="stop" aria-label="Radio stoppen" title="Stopp"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/></svg></button></div>
 <span id="status" role="status" aria-live="polite" class="sr-only">Bereit</span>
@@ -49,7 +52,8 @@ const streams={
  srf1:{name:'SRF 1',url:'https://stream.srg-ssr.ch/srgssr/srf1/mp3/128'},
  srf3:{name:'SRF 3',url:'https://stream.srg-ssr.ch/srgssr/srf3/mp3/128'},
  pilatus:{name:'Pilatus',url:'https://stream.streambase.ch/radiopilatus/mp3-128/stream.streambase.ch/'},
- xmas:{name:'X-Mas',url:'https://mp3.ffh.de/ffhchannels/hqxmas.mp3'}
+ xmas:{name:'X-Mas',url:'https://mp3.ffh.de/ffhchannels/hqxmas.mp3'},
+ musikwelle:{name:'Musikwelle',url:'https://stream.srg-ssr.ch/srgssr/srfmw/mp3/128'}
 };
 const radio=document.querySelector('#radio');
 const status=document.querySelector('#status');
